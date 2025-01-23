@@ -1,0 +1,158 @@
+[
+  {
+    "id": 1,
+    "title": "Dashboard",
+    "icon": "BiSolidDashboard",
+    "path": "/admin/dashboard",
+    "isParent": false,
+    "isChild": false
+  },
+
+  {
+    "id": 2,
+    "title": "Setups",
+    "icon": "MdOutlineSettings",
+    "path": "",
+    "isParent": true,
+    "isChild": false,
+    "subMenu": [
+      {
+        "id": 11,
+        "parentId": 2,
+        "title": "Continent",
+        "icon": "FaGlobe",
+        "path": "/admin/continent",
+        "isParent": false,
+        "isChild": true
+      },
+      {
+        "id": 12,
+        "parentId": 2,
+        "title": "Sub Regions",
+        "icon": "BsGlobeCentralSouthAsia",
+        "path": "/admin/region",
+        "isParent": false,
+        "isChild": true
+      },
+      {
+        "id": 13,
+        "parentId": 2,
+        "title": "Countries",
+        "icon": "GiEarthAfricaEurope",
+        "path": "/admin/country",
+        "isParent": false,
+        "isChild": true
+      },
+      {
+        "id": 14,
+        "parentId": 2,
+        "title": "Schools",
+        "icon": "MdSchool",
+        "path": "/admin/school",
+        "isParent": false,
+        "isChild": true
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "title": "Users",
+    "icon": "FaUsers",
+    "path": "/admin/user",
+    "isParent": false,
+    "isChild": false
+  },
+  {
+    "id": 4,
+    "title": "Jobs",
+    "icon": "BsFilePost",
+    "path": "/admin/job",
+    "isParent": false,
+    "isChild": false
+  },
+  {
+    "id": 5,
+    "title": "Scholarship",
+    "icon": "FaAward",
+    "path": "/admin/scholarship",
+    "isParent": false,
+    "isChild": false
+  },
+  {
+    "id": 6,
+    "title": "Events",
+    "icon": "MdEventNote",
+    "path": "/admin/event",
+    "isParent": false,
+    "isChild": false
+  },
+  {
+    "id": 7,
+    "title": "Discussions",
+    "icon": "RiDiscussFill",
+    "path": "/admin/discussion",
+    "isParent": false,
+    "isChild": false
+  },
+  {
+    "id": 8,
+    "title": "Services",
+    "icon": "FaServicestack",
+    "path": "/admin/service",
+    "isParent": false,
+    "isChild": false
+  },
+  {
+    "id": 10,
+    "title": "News Letters",
+    "icon": "FaMailBulk",
+    "path": "/admin/bulknews",
+    "isParent": false,
+    "isChild": false
+  },
+  {
+    "id": 11,
+    "title": "Dynamic Report",
+    "icon": "HiDocumentReport",
+    "path": "/admin/report",
+    "isParent": false,
+    "isChild": false
+  },
+  {
+    "id": 9,
+    "title": "UI",
+    "icon": "BiLayout",
+    "path": "",
+    "isParent": true,
+    "isChild": false,
+    "subMenu": [
+      {
+        "id": 112,
+        "parentId": 9,
+        "title": "Hero",
+        "icon": "TbLayoutBottombarFilled",
+        "path": "/admin/hero",
+        "isParent": false,
+        "isChild": true
+      },
+      {
+        "id": 122,
+        "parentId": 9,
+        "title": "News",
+        "icon": "FaRegNewspaper",
+        "path": "/admin/news",
+        "isParent": false,
+        "isChild": true
+      },
+      {
+        "id": 132,
+        "parentId": 9,
+        "title": "Sponsors",
+        "icon": "MdOutlineSupport",
+        "path": "/admin/sponsors",
+        "isParent": false,
+        "isChild": true
+      }
+    ]
+  }
+]

@@ -1,0 +1,20 @@
+[
+  {
+    "key": 1,
+    "image": "/hero/edifye4.jpg",
+    "title": "The Future ",
+    "description": "Lorem ipsum dolor sit amet consectetur. Et mattis id imperdiet in et urna vitae commodo ollicitudin. Id eget sem aliquet hendrerit aliquet. Cras imperdiet sagittis fermentum viverra fermentum. Vel egestas aenean nisi nulla senectus lorem cras."
+  },
+  {
+    "key": 2,
+    "image": "/hero/edifye2.jpg",
+    "title": "October Conference 24",
+    "description": "Lorem ipsum dolor sit amet consectetur. Et mattis id imperdiet in et urna vitae commodo ollicitudin. Id eget sem aliquet hendrerit aliquet. Cras imperdiet sagittis fermentum viverra fermentum. Vel egestas aenean nisi nulla senectus lorem cras.."
+  },
+  {
+    "key": 3,
+    "image": "/hero/edifye5.jpg",
+    "title": "The Future ",
+    "description": "Lorem ipsum dolor sit amet consectetur. Et mattis id imperdiet in et urna vitae commodo ollicitudin. Id eget sem aliquet hendrerit aliquet."
+  }
+]

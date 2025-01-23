@@ -1,0 +1,117 @@
+{
+  "id": "clx21jho80000wa7h93fzj9va",
+  "user_id": "36cbeced-7842-4609-9152-2d2fbdf2716f",
+  "name": "Joseph Boadi",
+  "phone_numbers": "0542754476",
+  "email": "boadijoseph151@gmail.com",
+  "address": null,
+  "date_added": null,
+  "status": 1,
+  "date_activated": null,
+  "year": "2005",
+  "school_id": "9894b893-4125-4f56-9d83-4c8a265d76fa",
+  "country_of_res_id": "0fd839cf-06a6-4352-947f-0770fa68dfde",
+  "emailVerified": "2024-06-05T17:25:36.608Z",
+  "image": null,
+  "imageObj": null,
+  "password": "$2a$10$AE2S9Gz7rIvrkGUvR9ERn.MOsKobOkieLuANrg9cE2QNH6IMpGiAm",
+  "role": "USER",
+  "isTwoFactorEnabled": false,
+  "user_employment": [],
+  "user_education": [],
+  "user_certificate": [],
+  "school": {
+    "id": 5,
+    "school_id": "9894b893-4125-4f56-9d83-4c8a265d76fa",
+    "country_id": "0fd839cf-06a6-4352-947f-0770fa68dfde",
+    "school_name": "Morning Glory Int.",
+    "phone_numbers": ["233554340244", "233266504723"],
+    "address": "123 Example St, Example City",
+    "status": 1,
+    "date_added": "2024-06-20T17:11:34.814Z"
+  },
+  "country": {
+    "id": 2,
+    "country_id": "0fd839cf-06a6-4352-947f-0770fa68dfde",
+    "country_name": "Ghanaaaa",
+    "date_created": "2024-06-07T15:50:56.160Z",
+    "country_code": "GHA",
+    "status": 1,
+    "is_edify_country": 0,
+    "subreion_id": "24f80a4e-23aa-49f6-a356-4afe6816d399"
+  },
+  "job_applications": [
+    {
+      "id": 2,
+      "application_id": "6b18f668-ba87-473b-a9fd-6b0d063ea2f7",
+      "date_added": "2024-08-02T12:40:24.466Z",
+      "status": 1,
+      "user_id": "clx21jho80000wa7h93fzj9va",
+      "job_id": "c5ed299c-70ff-46b1-bf8d-89f6f5e3907d",
+      "cvUrl": "samplecv.pdf",
+      "coverPageUrl": "samplecoverpage.pdf",
+      "processComment": "Sample comment for processing",
+      "user_process_id": "clx21jho80000wa7h93fzj9va",
+      "date_processed": "2024-08-02T14:01:35.269Z",
+      "job": {
+        "id": 3,
+        "job_id": "c5ed299c-70ff-46b1-bf8d-89f6f5e3907d",
+        "jobTitle": "Front end developer",
+        "status": 1,
+        "country_id": "2ff3d1d2-a125-49f2-a2c0-1c0a301c854c",
+        "jobType": "Full time",
+        "jobCategory": "Software Engineering",
+        "minimumSalary": "5000",
+        "maximumSalary": "10000",
+        "location": "Accra",
+        "infomation": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has",
+        "description": [
+          "description 1 sample details",
+          "description 2",
+          "more descriptions for testing"
+        ],
+        "sepcification": [
+          "Specification 1",
+          "sample specifications to take note of",
+          "short specification"
+        ],
+        "numberOfApplication": 1,
+        "numberOfConfirmation": 1,
+        "numberOfPending": 0,
+        "numberOfDeclined": 0,
+        "date_added": "2024-08-01T23:07:37.314Z",
+        "salaryCurrency": "GHS"
+      }
+    }
+  ],
+  "scholarships": [
+    {
+      "id": 1,
+      "application_id": "578626eb-9e3e-45a7-81bf-1980a5379a37",
+      "date_added": "2024-08-02T16:26:42.615Z",
+      "status": 0,
+      "user_id": "clx21jho80000wa7h93fzj9va",
+      "scholarship_id": "25dbed50-c862-4bbb-aad1-c14e17e7ec85",
+      "certificate_url": "certurl.pdf",
+      "application_letter_url": "appurl.pdf",
+      "recommendation_letter_url": "recomurl.pdf",
+      "processComment": null,
+      "user_process_id": null,
+      "date_processed": "2024-08-02T16:26:42.615Z",
+      "scholarship": {
+        "id": 1,
+        "scholarship_id": "25dbed50-c862-4bbb-aad1-c14e17e7ec85",
+        "title": "West African scholarship for needy",
+        "status": 1,
+        "country_id": "2ff3d1d2-a125-49f2-a2c0-1c0a301c854c",
+        "infomation": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has",
+        "numberOfApplication": 1,
+        "numberOfConfirmation": 0,
+        "numberOfPending": 1,
+        "numberOfDeclined": 0,
+        "date_added": "2024-08-02T15:09:14.627Z",
+        "cover_image_url": "samplecoverimageurl.png"
+      }
+    }
+  ]
+}

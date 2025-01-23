@@ -1,0 +1,26 @@
+[
+  {
+    "name": "Full-time",
+    "value": "Full-time"
+  },
+  {
+    "name": "Permanent",
+    "value": "Permanent"
+  },
+  {
+    "name": "Internship",
+    "value": "Internship"
+  },
+  {
+    "name": "Contract",
+    "value": "Contract"
+  },
+  {
+    "name": "Part-time",
+    "value": "Part-time"
+  },
+  {
+    "name": "Temporary",
+    "value": "Temporary"
+  }
+]

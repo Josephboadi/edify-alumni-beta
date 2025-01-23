@@ -1,0 +1,51 @@
+[
+  {
+    "key": 1,
+    "image": "/scholarship/image1.png",
+    "title": "TVET Scholarship",
+    "publishDate": "Thu Feb 22 2024 19:15:04 GMT+0000 (Greenwich Mean Time)",
+    "information": "Lorem ipsum dolor sit amet consectetur. Mauris risus massa accumsan a eleifend in in integer. Enim hendrerit nec eu nullam vitae faucibus. Sed morbi posuere commodo nam fusce. Amet aliquam egestas lorem lacinia id duis."
+  },
+  {
+    "key": 2,
+    "image": "/scholarship/image2.png",
+    "title": "TVET Scholarship",
+    "publishDate": "Thu Feb 22 2024 19:15:04 GMT+0000 (Greenwich Mean Time)",
+    "information": "Lorem ipsum dolor sit amet consectetur. Mauris risus massa accumsan a eleifend in in integer. Enim hendrerit nec eu nullam vitae faucibus. Sed morbi posuere commodo nam fusce. Amet aliquam egestas lorem lacinia id duis."
+  },
+  {
+    "key": 3,
+    "image": "/scholarship/image3.png",
+    "title": "TVET Scholarship",
+    "publishDate": "Thu Feb 22 2024 19:15:04 GMT+0000 (Greenwich Mean Time)",
+    "information": "Lorem ipsum dolor sit amet consectetur. Mauris risus massa accumsan a eleifend in in integer. Enim hendrerit nec eu nullam vitae faucibus. Sed morbi posuere commodo nam fusce. Amet aliquam egestas lorem lacinia id duis."
+  },
+  {
+    "key": 4,
+    "image": "/scholarship/image1.png",
+    "title": "TVET Scholarship",
+    "publishDate": "Thu Feb 22 2024 19:15:04 GMT+0000 (Greenwich Mean Time)",
+    "information": "Lorem ipsum dolor sit amet consectetur. Mauris risus massa accumsan a eleifend in in integer. Enim hendrerit nec eu nullam vitae faucibus. Sed morbi posuere commodo nam fusce. Amet aliquam egestas lorem lacinia id duis."
+  },
+  {
+    "key": 5,
+    "image": "/scholarship/image2.png",
+    "title": "TVET Scholarship",
+    "publishDate": "Thu Feb 22 2024 19:15:04 GMT+0000 (Greenwich Mean Time)",
+    "information": "Lorem ipsum dolor sit amet consectetur. Mauris risus massa accumsan a eleifend in in integer. Enim hendrerit nec eu nullam vitae faucibus. Sed morbi posuere commodo nam fusce. Amet aliquam egestas lorem lacinia id duis."
+  },
+  {
+    "key": 6,
+    "image": "/scholarship/image3.png",
+    "title": "TVET Scholarship",
+    "publishDate": "Thu Feb 22 2024 19:15:04 GMT+0000 (Greenwich Mean Time)",
+    "information": "Lorem ipsum dolor sit amet consectetur. Mauris risus massa accumsan a eleifend in in integer. Enim hendrerit nec eu nullam vitae faucibus. Sed morbi posuere commodo nam fusce. Amet aliquam egestas lorem lacinia id duis."
+  },
+  {
+    "key": 7,
+    "image": "/scholarship/image1.png",
+    "title": "TVET Scholarship",
+    "publishDate": "Thu Feb 22 2024 19:15:04 GMT+0000 (Greenwich Mean Time)",
+    "information": "Lorem ipsum dolor sit amet consectetur. Mauris risus massa accumsan a eleifend in in integer. Enim hendrerit nec eu nullam vitae faucibus. Sed morbi posuere commodo nam fusce. Amet aliquam egestas lorem lacinia id duis."
+  }
+]

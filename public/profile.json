@@ -1,0 +1,99 @@
+{
+  "bio": {
+    "name": "Kofi Ghana Ghana Ghana",
+    "email": "Kofi.Ghana12345@gmail.com",
+    "image": "/profile/profile.png",
+    "country": "Ghana",
+    "region": "Greater Accra",
+    "homeAddress": "2nd Street, Spintex.",
+    "postalAddress": "P. O Box 5885, Accra"
+  },
+  "education": [
+    {
+      "school": "Accra Technical University",
+      "completionYear": "2018"
+    },
+    {
+      "school": "Methodist Senior High School",
+      "completionYear": "2013"
+    },
+    {
+      "school": "Edify Partner School",
+      "completionYear": "2010"
+    }
+  ],
+  "certificates": [
+    {
+      "title": "Bachelor of Science in Information Technology"
+    },
+    {
+      "title": "General Arts (West African Secondary School Certificate Examination)"
+    },
+    {
+      "title": "B.E.C.E"
+    }
+  ],
+  "employments": [
+    {
+      "company": "Meridian Port Services",
+      "position": "Supervisor",
+      "period": "2020 - Present"
+    },
+    {
+      "company": "Meridian Port Services",
+      "position": "Supervisor",
+      "period": "2020 - Present"
+    },
+    {
+      "company": "Meridian Port Services",
+      "position": "Supervisor",
+      "period": "2020 - Present"
+    },
+    {
+      "company": "Meridian Port Services",
+      "position": "Supervisor",
+      "period": "2020 - Present"
+    }
+  ],
+  "scholarships": [
+    {
+      "institution": "Accra Technical University",
+      "status": "Approved"
+    },
+    {
+      "institution": "Regional Maritime University",
+      "status": "Declined"
+    },
+    {
+      "institution": "University of Ghana (Legon)",
+      "status": "Declined"
+    },
+    {
+      "institution": "KOTAC",
+      "status": "Declined"
+    }
+  ],
+  "jobApplications": [
+    {
+      "jobTitle": "Technician Assistant ",
+      "company": "Tema Hospital",
+      "status": "Interview Stage"
+    },
+    {
+      "jobTitle": "Tally Clerk ",
+      "company": "Meridian Port Services",
+      "status": "Pending Recruitment"
+    },
+    {
+      "jobTitle": "Virtual Assistant",
+      "company": "Art Biz Ghana",
+      "status": "Pending Enlistment"
+    }
+  ],
+  "services": [
+    {
+      "request": "Mental Support",
+      "status": "Request Approved"
+    }
+  ]
+}

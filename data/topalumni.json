@@ -1,0 +1,61 @@
+[
+  {
+    "key": 1,
+    "image": "/alumni/alumni1.png",
+    "name": "Mr. Boakye Owusu",
+    "company": "VRA",
+    "position": "Executive Director",
+    "info": "Right after completing the first degree in Computer Science, He went on to pursue a masters in Management and"
+  },
+  {
+    "key": 2,
+    "image": "/alumni/alumni2.png",
+    "name": "Mr. Boakye Owusu",
+    "company": "VRA",
+    "position": "Executive Director",
+    "info": "Right after completing the first degree in Computer Science, He went on to pursue a masters in Management and"
+  },
+  {
+    "key": 3,
+    "image": "/alumni/alumni3.png",
+    "name": "Mr. Boakye Owusu",
+    "company": "VRA",
+    "position": "Executive Director",
+    "info": "Right after completing the first degree in Computer Science, He went on to pursue a masters in Management and"
+  },
+
+  {
+    "key": 4,
+    "image": "/alumni/alumni4.png",
+    "name": "Mrs. Lydia Mensah",
+    "company": "GRA-Customs Division",
+    "position": "Executive Director",
+    "info": "Right after completing the first degree in Computer Science, He went on to pursue a masters in Management and"
+  },
+
+  {
+    "key": 5,
+    "image": "/alumni/alumni2.png",
+    "name": "Mr. Boakye Owusu",
+    "company": "VRA",
+    "position": "Executive Director",
+    "info": "Right after completing the first degree in Computer Science, He went on to pursue a masters in Management and"
+  },
+  {
+    "key": 6,
+    "image": "/alumni/alumni3.png",
+    "name": "Mr. Boakye Owusu",
+    "company": "VRA",
+    "position": "Executive Director",
+    "info": "Right after completing the first degree in Computer Science, He went on to pursue a masters in Management and"
+  },
+
+  {
+    "key": 7,
+    "image": "/alumni/alumni4.png",
+    "name": "Mrs. Lydia Mensah",
+    "company": "GRA-Customs Division",
+    "position": "Executive Director",
+    "info": "Right after completing the first degree in Computer Science, He went on to pursue a masters in Management and"
+  }
+]

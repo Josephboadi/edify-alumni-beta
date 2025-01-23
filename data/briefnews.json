@@ -1,0 +1,20 @@
+[
+  {
+    "key": 1,
+    "images": ["/news/news1.png", "/news/news2.png", "/news/news1.png"],
+    "title": "Rwanda School Donation",
+    "description": "Lorem ipsum dolor sit amet consectetur. Et mattis id imperdiet in et urna vitae sollicitudin. Id eget sem aliquet hendrerit Cras imperdiet sagittis fermentum viverra Vel egestas aenean nisi nulla senectus lorem cras. Lorem ipsum dolor sit amet consectetur. Et mattis id imperdiet in et urna vitae "
+  },
+  {
+    "key": 2,
+    "images": ["/news/news2.png", "/news/news1.png", "/news/news2.png"],
+    "title": "Nigeria School Donation",
+    "description": "Lorem ipsum dolor sit amet consectetur. Et mattis id imperdiet in et urna vitae sollicitudin. Id eget sem aliquet hendrerit Cras imperdiet sagittis fermentum viverra Vel egestas aenean nisi nulla senectus lorem cras. Lorem ipsum dolor sit amet consectetur. Et mattis id imperdiet in et urna vitae "
+  },
+  {
+    "key": 3,
+    "images": ["/news/news1.png", "/news/news2.png", "/news/news1.png"],
+    "title": "Ghana School Donation",
+    "description": "Lorem ipsum dolor sit amet consectetur. Et mattis id imperdiet in et urna vitae sollicitudin. Id eget sem aliquet hendrerit Cras imperdiet sagittis fermentum viverra Vel egestas aenean nisi nulla senectus lorem cras. Lorem ipsum dolor sit amet consectetur. Et mattis id imperdiet in et urna vitae "
+  }
+]

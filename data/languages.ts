@@ -1,0 +1,86 @@
+export const languagesData = [
+  {
+    key: 1,
+    lang: "en",
+    flag: "/flags/en.png",
+    title: "English",
+  },
+  {
+    key: 2,
+    lang: "de",
+    flag: "/flags/de.png",
+    title: "German",
+  },
+  {
+    key: 3,
+    lang: "af",
+    flag: "/flags/af.png",
+    title: "Afrikaans",
+  },
+  {
+    key: 4,
+    lang: "fr",
+    flag: "/flags/fr.png",
+    title: "French",
+  },
+  {
+    key: 5,
+    lang: "ab",
+    flag: "/flags/ab.png",
+    title: "Abkhazian",
+  },
+  {
+    key: 6,
+    lang: "ak",
+    flag: "/flags/ak.png",
+    title: "Akan",
+  },
+  {
+    key: 7,
+    lang: "as",
+    flag: "/flags/as.png",
+    title: "Assamese",
+  },
+  {
+    key: 8,
+    lang: "an",
+    flag: "/flags/an.png",
+    title: "Aragonese",
+  },
+  {
+    key: 9,
+    lang: "am",
+    flag: "/flags/am.png",
+    title: "Amharic",
+  },
+  {
+    key: 10,
+    lang: "ae",
+    flag: "/flags/ae.png",
+    title: "Avestan",
+  },
+  {
+    key: 11,
+    lang: "ba",
+    flag: "/flags/ba.png",
+    title: "Bashkir",
+  },
+  {
+    key: 12,
+    lang: "be",
+    flag: "/flags/be.png",
+    title: "Belarusian",
+  },
+  {
+    key: 13,
+    lang: "ca",
+    flag: "/flags/ca.png",
+    title: "Catalan",
+  },
+  {
+    key: 14,
+    lang: "co",
+    flag: "/flags/co.png",
+    title: "Corsican",
+  },
+];

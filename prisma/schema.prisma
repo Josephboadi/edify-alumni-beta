@@ -1,0 +1,478 @@
+// prisma/schema.prisma
+
+// datasource db {
+//   provider = "mysql"
+//   url     
+// = env("DATABASE_URL")
+// }
+
+datasource db {
+  provider  = "postgresql"
+  url  	    = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// enum UserRole {
+//   ADMIN
+//   USER
+// }
+
+
+// model User {
+  // id            String    @id @default(cuid())
+  // user_id       String     @default(uuid())
+//   name          String?
+//   email         String?   @unique
+//   emailVerified DateTime?
+//   phoneNumber       String?
+//   country       String?
+//   school        String?
+  // year          String?
+//   image         String?
+//   password      String?
+//   role          UserRole @default(USER)
+//   accounts      Account[]
+//   isTwoFactorEnabled Boolean @default(false)
+//   twoFactorConfirmation TwoFactorConfirmation?
+// }
+
+// model Account {
+//   id                 String  @id @default(cuid())
+//   userId             String
+//   type               String
+//   provider           String
+//   providerAccountId  String
+//   refresh_token      String?  @db.Text
+//   access_token       String?  @db.Text
+//   expires_at         Int?
+//   token_type         String?
+//   scope              String?
+//   id_token           String?  @db.Text
+//   session_state      String?
+
+//   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+//   @@unique([provider, providerAccountId])
+// }
+
+// model VerificationToken {
+//   id String @id @default(cuid())
+//   email String
+//   token String @unique
+//   expires DateTime
+
+//   @@unique([email, token])
+// }
+
+// model PasswordResetToken {
+//   id String @id @default(cuid())
+//   email String
+//   token String @unique
+//   expires DateTime
+
+//   @@unique([email, token])
+// }
+
+// model TwoFactorToken {
+//   id String @id @default(cuid())
+//   email String
+//   token String @unique
+//   expires DateTime
+
+//   @@unique([email, token])
+// }
+
+// model TwoFactorConfirmation {
+//   id String @id @default(cuid())
+
+//   userId String
+//   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+//   @@unique([userId])
+// }
+
+
+model Menu {
+  id          Int      @id @default(autoincrement())
+  menuTitle        String
+  path        String?
+  icon        String
+  position        Int 
+  status        Int @default(1)
+  component        String?
+  isParent      Boolean
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  parents   MenuHierarchy[] @relation("Parent")
+  childs   MenuHierarchy[] @relation("Descendant")
+  parent_id Int? 
+  parent   Menu?    @relation("Children", fields: [parent_id], references: [id])
+  children Menu[]   @relation("Children")
+}
+
+model MenuHierarchy {
+  //  id          String  @id @default(cuid())
+  parent_id   Int
+  child_id Int
+  parent     Menu @relation("Parent", fields: [parent_id], references: [id], onDelete: Cascade)
+  child   Menu @relation("Descendant", fields: [child_id], references: [id], onDelete: Cascade)
+  @@id([parent_id, child_id])
+}
+
+model RoleMenu {
+  id          Int      @id @default(autoincrement())
+  menuTitle        String
+  role        String
+  path        String?
+  icon        String
+  position        Int 
+  status        Int @default(1)
+  component        String?
+  isParent      Boolean
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  parents   RoleMenuHierarchy[] @relation("Parent")
+  childs   RoleMenuHierarchy[] @relation("Descendant")
+  parent_id Int? 
+  parent   RoleMenu?    @relation("Children", fields: [parent_id], references: [id])
+  children RoleMenu[]   @relation("Children")
+}
+
+model RoleMenuHierarchy {
+  //  id          String  @id @default(cuid())
+  parent_id   Int
+  child_id Int
+  parent     RoleMenu @relation("Parent", fields: [parent_id], references: [id], onDelete: Cascade)
+  child   RoleMenu @relation("Descendant", fields: [child_id], references: [id], onDelete: Cascade)
+  @@id([parent_id, child_id])
+}
+
+
+model Permission {
+  id String @id @default(cuid())
+  permission Int
+  action String 
+  controller Int
+  actionName String 
+  controllerName String
+  position Int
+  status Int @default(1)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+}
+
+model Form {
+  id          Int      @id @default(autoincrement())
+  userId      String
+  createdAt   DateTime @default(now())
+  published   Boolean  @default(false)
+  name        String
+  description String   @default("")
+  content     String   @default("[]")
+
+  visits      Int @default(0)
+  submissions Int @default(0)
+
+  shareURL        String            @unique @default(uuid())
+  FormSubmissions FormSubmissions[]
+
+  @@unique([name, userId])
+}
+
+model FormSubmissions {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  formId    Int
+  form      Form     @relation(fields: [formId], references: [id])
+
+  content String
+}
+
+
+
+model continent {
+  id               Int      @default(autoincrement())
+  continent_id       String   @id @default(uuid())
+  continent_name     String   @db.VarChar(100) @unique
+  date_created     DateTime @default(now())
+  status           Int      @default(1)
+  subregion           subregion[]
+}
+
+
+
+model subregion {
+  id               Int      @default(autoincrement())
+  subreion_id       String   @id @default(uuid())
+  subregion_name     String   @db.VarChar(100)
+  date_created     DateTime @default(now())
+  status           Int      @default(1)
+  continent       continent  @relation(fields: [continent_id], references: [continent_id])
+  continent_id     String
+  country           country[]
+}
+
+model country {
+  id               Int      @default(autoincrement())
+  country_id       String   @id @default(uuid())
+  country_name     String   @db.VarChar(100)
+  date_created     DateTime @default(now())
+  country_code     String   @db.VarChar(10)
+  status           Int      @default(1)
+  is_edify_country Int      @default(0)
+  subregion       subregion  @relation(fields: [subreion_id], references: [subreion_id])
+  subreion_id     String
+  school           school[]
+  User             User[]
+  job              Job[]
+  scholarship     Scholarship[]
+}
+
+model school {
+  id            Int      @default(autoincrement())
+  school_id     String   @id @default(uuid())
+  country       country  @relation(fields: [country_id], references: [country_id])
+  country_id    String
+  school_name   String   @db.VarChar(200)
+  phone_numbers String[]
+  address       String?
+  status        Int      @default(1)
+  date_added    DateTime @default(now())
+  User          User[]
+}
+
+model User {
+  id                    String                 @id @default(cuid())
+  user_id               String                 @default(uuid())
+  name                  String                 @db.VarChar(200)
+  phone_numbers         String
+  email                 String?                @unique
+  address               String?
+  date_added            DateTime?
+  status                Int                    @default(1)
+  date_activated        DateTime?
+  school                school?                 @relation(fields: [school_id], references: [school_id])
+  country               country?                @relation(fields: [country_of_res_id], references: [country_id])
+  year                  String?
+  school_id             String?
+  country_of_res_id     String?
+  emailVerified         DateTime?
+  image                 String?
+  imageObj              Json?
+  password              String?
+  accounts              Account[]
+  role                  UserRole               @default(USER)
+  isTwoFactorEnabled    Boolean                @default(false)
+  twoFactorConfirmation TwoFactorConfirmation?
+  user_employment       user_employment[]
+  user_education        user_education[]
+  user_certificate      user_certificate[]
+  job_applications     userJobApplications[]
+  processedBy          userJobApplications[] @relation(name: "processedBy")
+  scholarships userScholarshipApplications[]
+  scholarshipsProcessed  userScholarshipApplications[]  @relation(name: "scholarshipsProcessed")
+}
+
+model user_employment {
+  id            Int       @default(autoincrement())
+  employment_id String    @id @default(uuid())
+  company_name  String    @db.VarChar(200)
+  start_date    DateTime  @db.Date
+  end_date      DateTime? @db.Date
+  date_added    DateTime  @default(now())
+  status        Int       @default(1)
+  user          User      @relation(fields: [user_id], references: [id])
+  user_id       String
+}
+
+model user_education {
+  id                   Int       @default(autoincrement())
+  education_id         String    @id @default(uuid())
+  date_added           DateTime  @default(now())
+  school_name          String    @db.VarChar(200)
+  program_of_study     String    @db.VarChar(200)
+  start_date           DateTime  @db.Date
+  end_date             DateTime? @db.Date
+  certificate_obtained String?   @db.VarChar(200)
+  user                 User      @relation(fields: [user_id], references: [id])
+  user_id              String
+}
+
+model user_certificate {
+  id               Int      @default(autoincrement())
+  certificate_id   String   @id @default(uuid())
+  certificate_name String   @db.VarChar(200)
+  date_obtained    DateTime @db.Date
+  status           Int      @default(1)
+  date_added       DateTime @default(now())
+  user             User     @relation(fields: [user_id], references: [id])
+  user_id          String
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+// model VerificationToken {
+//   id      String   @id @default(cuid())
+//   user_id String
+//   token   String   @unique
+//   expires DateTime
+
+//   @@unique([user_id, token])
+// }
+
+model VerificationToken {
+  id String @id @default(cuid())
+  user_id String
+  email String
+  token String @unique
+  expires DateTime
+
+  @@unique([email, token, user_id])
+}
+
+model Session {
+  id String @id @default(cuid())
+  user_id String
+  token String @unique
+  expires DateTime
+
+  @@unique([ token, user_id])
+}
+
+model PasswordResetToken {
+  id      String   @id @default(cuid())
+  email   String
+  token   String   @unique
+  expires DateTime
+
+  @@unique([email, token])
+}
+
+model TwoFactorToken {
+  id      String   @id @default(cuid())
+  email   String
+  token   String   @unique
+  expires DateTime
+
+  @@unique([email, token])
+}
+
+model TwoFactorConfirmation {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId])
+}
+
+model Job{
+  id      Int  @default(autoincrement())
+  job_id   String   @id @default(uuid())
+  jobTitle String 
+  status    Int      @default(1)
+  country          country   @relation(fields: [country_id], references: [country_id])
+  country_id       String
+  jobType         String
+  jobCategory     String
+  minimumSalary  Decimal @default(0)
+  maximumSalary  Decimal @default(0)
+  location     String
+  infomation     String
+  description     String[]
+  sepcification String[]
+  numberOfApplication Int @default(0)
+  numberOfConfirmation Int @default(0)
+  numberOfPending Int @default(0)
+  numberOfDeclined Int @default(0)
+  date_added    DateTime  @default(now())
+  salaryCurrency String
+  applications userJobApplications[]
+ 
+}
+
+
+model userJobApplications{
+  id      Int  @default(autoincrement())
+  application_id   String   @id @default(uuid())
+  date_added    DateTime  @default(now())
+  status    Int      @default(0)
+  user             User     @relation(fields: [user_id], references: [id])
+  user_id          String
+  job             Job     @relation(fields: [job_id], references: [job_id])
+  job_id          String
+  cvUrl           String
+  coverPageUrl    String
+  processComment  String?
+  processedBy      User?     @relation(fields: [user_process_id], references: [id], name: "processedBy") 
+  user_process_id  String?
+  date_processed    DateTime?  @default(now())
+}
+
+
+
+
+
+model Scholarship{
+  id      Int  @default(autoincrement())
+  scholarship_id   String   @id @default(uuid())
+  title String 
+  status    Int      @default(1)
+  country          country   @relation(fields: [country_id], references: [country_id])
+  country_id       String
+  infomation     String
+  numberOfApplication Int @default(0)
+  numberOfConfirmation Int @default(0)
+  numberOfPending Int @default(0)
+  numberOfDeclined Int @default(0)
+  date_added    DateTime  @default(now())
+  cover_image_url String
+  applications userScholarshipApplications[]
+}
+
+
+model userScholarshipApplications{
+  id      Int  @default(autoincrement())
+  application_id   String   @id @default(uuid())
+  date_added    DateTime  @default(now())
+  status    Int      @default(0)
+  user             User     @relation(fields: [user_id], references: [id])
+  user_id          String
+  scholarship             Scholarship     @relation(fields: [scholarship_id], references: [scholarship_id])
+  scholarship_id          String
+  certificate_url           String
+  application_letter_url    String
+  recommendation_letter_url    String
+  processComment  String?
+  scholarshipsProcessed      User?     @relation(fields: [user_process_id], references: [id], name: "scholarshipsProcessed") 
+  user_process_id  String?
+  date_processed    DateTime?  @default(now())
+}
+
+
+
+enum UserRole {
+  ADMIN
+  USER
+}

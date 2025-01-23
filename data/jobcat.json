@@ -1,0 +1,37 @@
+[
+  {
+    "key": 1,
+    "image": "/job/cat1.png",
+    "title": "Education"
+  },
+  {
+    "key": 2,
+    "image": "/job/cat2.png",
+    "title": "Infomation Technology & Design"
+  },
+  {
+    "key": 3,
+    "image": "/job/cat3.png",
+    "title": "Construction"
+  },
+  {
+    "key": 4,
+    "image": "/job/cat4.png",
+    "title": "Agriculture"
+  },
+  {
+    "key": 5,
+    "image": "/job/cat5.png",
+    "title": "Finance/Marketing"
+  },
+  {
+    "key": 6,
+    "image": "/job/cat2.png",
+    "title": "Banking"
+  },
+  {
+    "key": 7,
+    "image": "/job/cat3.png",
+    "title": "Health"
+  }
+]

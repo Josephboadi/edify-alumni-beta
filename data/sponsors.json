@@ -1,0 +1,37 @@
+[
+  {
+    "key": 1,
+    "name": "sponsor1",
+    "image": "/sponsor/sponsor1.png"
+  },
+  {
+    "key": 2,
+    "name": "sponsor2",
+    "image": "/sponsor/sponsor2.png"
+  },
+  {
+    "key": 3,
+    "name": "sponsor3",
+    "image": "/sponsor/sponsor3.png"
+  },
+  {
+    "key": 4,
+    "name": "sponsor4",
+    "image": "/sponsor/sponsor4.png"
+  },
+  {
+    "key": 5,
+    "name": "sponsor5",
+    "image": "/sponsor/sponsor1.png"
+  },
+  {
+    "key": 6,
+    "name": "sponsor6",
+    "image": "/sponsor/sponsor2.png"
+  },
+  {
+    "key": 7,
+    "name": "sponsor7",
+    "image": "/sponsor/sponsor3.png"
+  }
+]
