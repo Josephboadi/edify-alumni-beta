@@ -16,7 +16,7 @@ import { MdVerifiedUser } from "react-icons/md";
 import { TbAlertTriangleFilled } from "react-icons/tb";
 import ProfileDetail from "../../_components/ProfileDetail";
 import ReportDetail from "../../_components/ReportDetail";
-import { getsingleuser } from "./../../../../../actions/user";
+import { getsingleuser, getusers } from "./../../../../../actions/user";
 import { AlertButton } from "./common/alert-button";
 import { AlertCardWrapper } from "./common/alert-card-wrapper";
 import Breadcrump from "./common/Breadcrump";
@@ -25,7 +25,7 @@ import { FormButton } from "./common/form-button";
 import { ImageWrapper } from "./common/image-wrapper";
 import Table from "./common/Table";
 
-export function UserDataTable({ userDataQuery }: any) {
+export function UserDataTable() {
   const { toast } = useToast();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -68,17 +68,17 @@ export function UserDataTable({ userDataQuery }: any) {
   useEffect(() => {
     setIsLoading(true);
     const getData = async () => {
-      // const data = await getusers();
-      if (userDataQuery?.success) {
-        setDataList(userDataQuery?.data);
+      const data = await getusers();
+      if (data?.success) {
+        setDataList(data?.data);
         setIsLoading(false);
-      } else if (userDataQuery?.error) {
+      } else if (data?.error) {
         setDataList([]);
         setIsLoading(false);
-        // setError(userDataQuery?.error);
+        // setError(data?.error);
         toast({
           title: "Error",
-          description: userDataQuery.error,
+          description: data.error,
           variant: "destructive",
         });
       } else {

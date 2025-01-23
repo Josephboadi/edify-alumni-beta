@@ -13,7 +13,7 @@ import * as z from "zod";
 
 // import { CardWrapper } from "@/components/auth/card-wrapper";
 import { getcountry } from "@/actions/country";
-import { addjob, updatejob } from "@/actions/jobs";
+import { addjob, getjobs, updatejob } from "@/actions/jobs";
 import DropdownRCountry from "@/components/common/DropdownRCountry";
 import ModalForm from "@/components/common/Modal";
 import { Button } from "@/components/ui/button";
@@ -59,7 +59,7 @@ import { Country } from "./setups/Country";
 type JobPost = z.infer<typeof NewJobFormSchema>;
 type NewJobFormValues = z.infer<typeof NewJobFormSchema>;
 
-export function JobDataTable({ jobDataQuery }: any) {
+export function JobDataTable() {
   const { toast } = useToast();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -205,17 +205,17 @@ export function JobDataTable({ jobDataQuery }: any) {
   useEffect(() => {
     setIsLoading(true);
     const getData = async () => {
-      // const data = await getjobs();
-      if (jobDataQuery?.success) {
-        setDataList(jobDataQuery?.data);
+      const data = await getjobs();
+      if (data?.success) {
+        setDataList(data?.data);
         setIsLoading(false);
-      } else if (jobDataQuery?.error) {
+      } else if (data?.error) {
         setDataList([]);
         setIsLoading(false);
-        // setError(jobDataQuery?.error);
+        // setError(data?.error);
         toast({
           title: "Error",
-          description: jobDataQuery.error,
+          description: data.error,
           variant: "destructive",
         });
       } else {

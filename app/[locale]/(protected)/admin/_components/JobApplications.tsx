@@ -11,7 +11,7 @@ import * as z from "zod";
 import Breadcrump from "./common/Breadcrump";
 
 // import { CardWrapper } from "@/components/auth/card-wrapper";
-import { processjobapplication } from "@/actions/jobs";
+import { getsinglejob, processjobapplication } from "@/actions/jobs";
 import ModalForm from "@/components/common/Modal";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -60,7 +60,7 @@ const font1 = Montserrat({
 });
 type JobPost = z.infer<typeof ProcessJobFormSchema>;
 
-export function JobApplications({ jobDetailsDataQuery }: any) {
+export function JobApplications() {
   const { toast } = useToast();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -130,19 +130,19 @@ export function JobApplications({ jobDetailsDataQuery }: any) {
   useEffect(() => {
     setIsLoading(true);
     const getData = async () => {
-      // const data = await getsinglejob(id ? id.toString() : "");
-      if (jobDetailsDataQuery?.success) {
-        setDataList(jobDetailsDataQuery?.data?.applications);
-        setJobDetailsData(jobDetailsDataQuery?.data);
+      const data = await getsinglejob(id ? id.toString() : "");
+      if (data?.success) {
+        setDataList(data?.data?.applications);
+        setJobDetailsData(data?.data);
         setIsLoading(false);
-      } else if (jobDetailsDataQuery?.error) {
+      } else if (data?.error) {
         setDataList([]);
         setJobDetailsData(undefined);
         setIsLoading(false);
-        // setError(jobDetailsDataQuery?.error);
+        // setError(data?.error);
         toast({
           title: "Error",
-          description: jobDetailsDataQuery.error,
+          description: data.error,
           variant: "destructive",
         });
       } else {

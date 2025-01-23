@@ -1,13 +1,9 @@
-import { getsinglescholarship } from "@/actions/scholarships";
 import { ScholarshipApplications } from "../../_components/ScholarshipApplications";
 
-const ScholarshipDetail = async ({ params }: any) => {
-  const scholarshipDetailsDataQuery = await getsinglescholarship(params.id);
+const ScholarshipDetail = () => {
   return (
     <div>
-      <ScholarshipApplications
-        scholarshipDetailsDataQuery={scholarshipDetailsDataQuery}
-      />
+      <ScholarshipApplications />
     </div>
   );
 };

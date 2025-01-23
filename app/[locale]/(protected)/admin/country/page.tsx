@@ -1,11 +1,9 @@
-import { getcountry } from "@/actions/country";
 import { CountryDataTable } from "../_components/setups/Country";
 
-const Country = async () => {
-  const countryDataQuery = await getcountry();
+const Country = () => {
   return (
     <div className="">
-      <CountryDataTable countryDataQuery={countryDataQuery} />
+      <CountryDataTable />
     </div>
   );
 };

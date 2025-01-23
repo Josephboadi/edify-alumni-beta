@@ -1,11 +1,9 @@
-import { getsubregion } from "@/actions/sub-region";
 import { RegionDataTable } from "../_components/setups/Region";
 
-const Region = async () => {
-  const subRegionDataQuery = await getsubregion();
+const Region = () => {
   return (
     <div className="">
-      <RegionDataTable subRegionDataQuery={subRegionDataQuery} />
+      <RegionDataTable />
     </div>
   );
 };

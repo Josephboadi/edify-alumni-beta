@@ -1,11 +1,9 @@
-import { getscholarships } from "@/actions/scholarships";
 import { ScholarshipDataTable } from "../_components/Scholarship";
 
-const Scholarship = async () => {
-  const scholarshipDataQuery = await getscholarships();
+const Scholarship = () => {
   return (
     <div className="">
-      <ScholarshipDataTable scholarshipDataQuery={scholarshipDataQuery} />
+      <ScholarshipDataTable />
     </div>
   );
 };

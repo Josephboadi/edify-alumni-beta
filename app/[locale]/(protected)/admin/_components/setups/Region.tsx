@@ -17,6 +17,7 @@ import { getcontinent } from "@/actions/continent";
 import {
   addbatchsubregion,
   addsubregion,
+  getsubregion,
   updatesubregion,
 } from "@/actions/sub-region";
 import DropdownContinent from "@/components/common/DropdownContinent";
@@ -60,7 +61,7 @@ export const ContinentIDSchema = z.object({
   }),
 });
 
-export function RegionDataTable({ subRegionDataQuery }: any) {
+export function RegionDataTable() {
   const { toast } = useToast();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -172,17 +173,17 @@ export function RegionDataTable({ subRegionDataQuery }: any) {
   useEffect(() => {
     setIsLoading(true);
     const getData = async () => {
-      // const data = await getsubregion();
-      if (subRegionDataQuery?.success) {
-        setDataList(subRegionDataQuery?.data);
+      const data = await getsubregion();
+      if (data?.success) {
+        setDataList(data?.data);
         setIsLoading(false);
-      } else if (subRegionDataQuery?.error) {
+      } else if (data?.error) {
         setDataList([]);
         setIsLoading(false);
-        // setError(subRegionDataQuery?.error);
+        // setError(data?.error);
         toast({
           title: "Error",
-          description: subRegionDataQuery.error,
+          description: data.error,
           variant: "destructive",
         });
       } else {

@@ -13,7 +13,11 @@ import * as z from "zod";
 
 // import { CardWrapper } from "@/components/auth/card-wrapper";
 import { getcountry } from "@/actions/country";
-import { addscholarship, updatescholarship } from "@/actions/scholarships";
+import {
+  addscholarship,
+  getscholarships,
+  updatescholarship,
+} from "@/actions/scholarships";
 import DropdownRCountry from "@/components/common/DropdownRCountry";
 import ModalForm from "@/components/common/Modal";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -44,7 +48,7 @@ import { ImageWrapper } from "./common/image-wrapper";
 import ModalTable from "./common/ModalTable";
 import { Country } from "./setups/Country";
 
-export function ScholarshipDataTable({ scholarshipDataQuery }: any) {
+export function ScholarshipDataTable() {
   const { toast } = useToast();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -244,17 +248,17 @@ export function ScholarshipDataTable({ scholarshipDataQuery }: any) {
   useEffect(() => {
     setIsLoading(true);
     const getData = async () => {
-      // const data = await getscholarships();
-      if (scholarshipDataQuery?.success) {
-        setDataList(scholarshipDataQuery?.data);
+      const data = await getscholarships();
+      if (data?.success) {
+        setDataList(data?.data);
         setIsLoading(false);
-      } else if (scholarshipDataQuery?.error) {
+      } else if (data?.error) {
         setDataList([]);
         setIsLoading(false);
-        // setError(scholarshipDataQuery?.error);
+        // setError(data?.error);
         toast({
           title: "Error",
-          description: scholarshipDataQuery.error,
+          description: data.error,
           variant: "destructive",
         });
       } else {

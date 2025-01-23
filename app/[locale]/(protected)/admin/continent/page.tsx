@@ -1,11 +1,9 @@
-import { getcontinent } from "@/actions/continent";
 import { ContinentDataTable } from "../_components/setups/Continent";
 
-const Continent = async () => {
-  const continentDataQuery = await getcontinent();
+const Continent = () => {
   return (
     <div className="">
-      <ContinentDataTable continentDataQuery={continentDataQuery} />
+      <ContinentDataTable />
     </div>
   );
 };

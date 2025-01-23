@@ -1,11 +1,9 @@
-import { getjobs } from "@/actions/jobs";
 import { JobDataTable } from "../_components/Job";
 
-const Job = async () => {
-  const jobDataQuery = await getjobs();
+const Job = () => {
   return (
     <div className="">
-      <JobDataTable jobDataQuery={jobDataQuery} />
+      <JobDataTable />
     </div>
   );
 };

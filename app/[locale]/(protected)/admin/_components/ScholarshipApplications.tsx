@@ -11,7 +11,10 @@ import * as z from "zod";
 import Breadcrump from "./common/Breadcrump";
 
 // import { CardWrapper } from "@/components/auth/card-wrapper";
-import { processscholarshipapplication } from "@/actions/scholarships";
+import {
+  getsinglescholarship,
+  processscholarshipapplication,
+} from "@/actions/scholarships";
 import ModalForm from "@/components/common/Modal";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -60,7 +63,7 @@ const font1 = Montserrat({
 });
 type ScholarshipPost = z.infer<typeof ProcessScholarshipFormSchema>;
 
-export function ScholarshipApplications({ scholarshipDetailsDataQuery }: any) {
+export function ScholarshipApplications() {
   const { toast } = useToast();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -135,19 +138,19 @@ export function ScholarshipApplications({ scholarshipDetailsDataQuery }: any) {
   useEffect(() => {
     setIsLoading(true);
     const getData = async () => {
-      // const data = await getsinglescholarship(id ? id.toString() : "");
-      if (scholarshipDetailsDataQuery?.success) {
-        setDataList(scholarshipDetailsDataQuery?.data?.applications);
-        setScholarshipDetailsData(scholarshipDetailsDataQuery?.data);
+      const data = await getsinglescholarship(id ? id.toString() : "");
+      if (data?.success) {
+        setDataList(data?.data?.applications);
+        setScholarshipDetailsData(data?.data);
         setIsLoading(false);
-      } else if (scholarshipDetailsDataQuery?.error) {
+      } else if (data?.error) {
         setDataList([]);
         setScholarshipDetailsData(undefined);
         setIsLoading(false);
-        // setError(scholarshipDetailsDataQuery?.error);
+        // setError(data?.error);
         toast({
           title: "Error",
-          description: scholarshipDetailsDataQuery.error,
+          description: data.error,
           variant: "destructive",
         });
       } else {
