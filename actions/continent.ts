@@ -1,7 +1,7 @@
 "use server";
-import { auth, signOut } from "@/auth";
-import { getSessionByID } from "@/data/session-id";
+import { signOut } from "@/auth";
 import { createUrl } from "@/lib/http";
+import { generateSessionToken } from "@/lib/tokens";
 import { ContinentSchema } from "@/schemas";
 import axios from "axios";
 import * as z from "zod";
@@ -16,9 +16,7 @@ export const addcontinent = async (
   values: z.infer<typeof ContinentSchema>,
   locale: any
 ) => {
-  const authData = await auth();
-  const existingToken = await getSessionByID(authData?.user?.id || "");
-  // const data = await verifyAuth(authData?.user?.token || "");
+  const existingToken = await generateSessionToken();
 
   // if (data.success) {
   const validatedFields = ContinentSchema.safeParse(values);
@@ -70,8 +68,7 @@ export const addcontinent = async (
 };
 
 export const addbatchcontinent = async (values: Continents[], locale: any) => {
-  const authData = await auth();
-  const existingToken = await getSessionByID(authData?.user?.id || "");
+  const existingToken = await generateSessionToken();
 
   axios.interceptors.request.use(
     (config) => {
@@ -116,9 +113,7 @@ export const updatecontinent = async (
   locale: any,
   id: string
 ) => {
-  const authData = await auth();
-  const existingToken = await getSessionByID(authData?.user?.id || "");
-  // const data = await verifyAuth(authData?.user?.token || "");
+  const existingToken = await generateSessionToken();
 
   // if (data.success) {
   const validatedFields = ContinentSchema.safeParse(values);
@@ -173,8 +168,7 @@ export const updatecontinent = async (
 };
 
 export const getcontinent = async () => {
-  const authData = await auth();
-  const existingToken = await getSessionByID(authData?.user?.id || "");
+  const existingToken = await generateSessionToken();
 
   axios.interceptors.request.use(
     (config) => {

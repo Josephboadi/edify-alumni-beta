@@ -22,7 +22,6 @@ import * as z from "zod";
 import {
   addbatchcontinent,
   addcontinent,
-  getcontinent,
   updatecontinent,
 } from "@/actions/continent";
 import ModalForm from "@/components/common/Modal";
@@ -61,7 +60,7 @@ export type Continent = {
 const acceptableCSVFileTypes =
   "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel, .csv";
 
-export function ContinentDataTable() {
+export function ContinentDataTable({ continentQueryData }: any) {
   const { toast } = useToast();
   const router = useRouter();
   const pathname = usePathname();
@@ -166,17 +165,17 @@ export function ContinentDataTable() {
   useEffect(() => {
     setIsLoading(true);
     const getData = async () => {
-      const data = await getcontinent();
-      if (data?.success) {
-        setDataList(data?.data);
+      // const data = await getcontinent();
+      if (continentQueryData?.success) {
+        setDataList(continentQueryData?.data);
         setIsLoading(false);
-      } else if (data?.error) {
+      } else if (continentQueryData?.error) {
         setDataList([]);
         setIsLoading(false);
-        // setError(data?.error);
+        // setError(continentQueryData?.error);
         toast({
           title: "Error",
-          description: data.error,
+          description: continentQueryData.error,
           variant: "destructive",
         });
       } else {

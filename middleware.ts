@@ -1,5 +1,6 @@
 import authConfig from "@/auth.config";
 import NextAuth from "next-auth";
+
 import { i18nRouter } from "next-i18n-router";
 import { NextResponse } from "next/server";
 import i18nConfig from "./i18nConfig";
@@ -11,6 +12,10 @@ export default auth(async (req) => {
   const isLoggedIn = !!req.auth;
   const fallbacklanguage = "/";
   const fallbacklanguage1 = "/de";
+
+  // if (req.auth) {
+  //   await generateSessionToken();
+  // }
 
   let locale = (await req.cookies.get("NEXT_LOCALE")?.value)?.toString();
 

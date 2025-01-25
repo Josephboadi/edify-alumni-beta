@@ -10,6 +10,7 @@ import { getUserByEmail } from "@/data/user";
 import { db } from "@/lib/db";
 import { sendTwoFactorTokenEmail, sendVerificationEmail } from "@/lib/mail";
 import {
+  createSessionToken,
   generateTwoFactorToken,
   generateVerificationToken,
 } from "@/lib/tokens";
@@ -97,17 +98,14 @@ export const login = async (
   }
 
   try {
+    await createSessionToken(existingUser.id);
     await signIn("credentials", {
       email,
       password,
       // redirectTo: callbackUrl || redirectUrl,
       redirectTo: redirectUrl,
     });
-    console.log(
-      "Sign in successfully===========================================, "
-    );
-
-    // return { success: "login successful!" };
+   
   } catch (error) {
     if (error instanceof AuthError) {
       switch (error.type) {

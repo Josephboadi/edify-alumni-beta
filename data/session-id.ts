@@ -12,6 +12,18 @@ export const getSessionByID = async (user_id: string) => {
   }
 };
 
+export const getSessionUserByEmail = async (email: string) => {
+  try {
+    const userdata = await db.user.findUnique({
+      where: { email },
+    });
+
+    return userdata;
+  } catch (err) {
+    return null;
+  }
+};
+
 export const getSessionByToken = async (token: string) => {
   try {
     const session = await db.session.findFirst({

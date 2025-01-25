@@ -1,12 +1,13 @@
 import crypto from "crypto";
 import { v4 as uuidv4 } from "uuid";
 
-import { signOut } from "@/auth";
+import { auth, signOut } from "@/auth";
 import { getPasswordResetTokenByEmail } from "@/data/password-reset-token";
 import { getSessionByID } from "@/data/session-id";
 import { getTwoFactorTokenByEmail } from "@/data/two-factor-token";
 import { getVerificationTokenByEmail } from "@/data/verificiation-token";
 import { db } from "@/lib/db";
+import { createToken } from "./session";
 
 export const generateTwoFactorToken = async (email: string) => {
   const token = crypto.randomInt(100_000, 1_000_000).toString();
@@ -85,41 +86,65 @@ export const generateVerificationToken = async (
   return verficationToken;
 };
 
-export const generateSessionToken = async (
-  user_id: string,
-  expires: string,
-  token: string
-) => {
-  let sessionToken;
-  const existingToken = await getSessionByID(user_id);
-  // console.log("EXISTINGTOKEN===============================, ", existingToken);
-  if (existingToken) {
-    const hasExpired = new Date(existingToken.expires) < new Date();
-    if (hasExpired) {
+export const generateSessionToken = async () => {
+  let sessionData;
+  const authData = await auth();
+
+  if (authData) {
+    const existingToken = await getSessionByID(authData?.user.id);
+    if (existingToken) {
+      const hasExpired = new Date(existingToken.expires) < new Date();
+      if (hasExpired) {
+        await db.session.delete({
+          where: {
+            id: existingToken.id,
+          },
+        });
+        await signOut();
+        return;
+      } else {
+        const now = new Date(); // Current date and time
+        const twoHoursLater = new Date(now.getTime() + 2 * 60 * 60 * 1000); // Add 2 hours in milliseconds
+        sessionData = await db.session.update({
+          data: { expires: twoHoursLater },
+          where: {
+            id: existingToken.id,
+          },
+        });
+      }
+    }
+  }
+
+  return sessionData;
+};
+
+export const createSessionToken = async (user_id: string) => {
+  // let sessionToken;
+  const token = await createToken();
+  const now = new Date(); // Current date and time
+  const twoHoursLater = new Date(now.getTime() + 2 * 60 * 60 * 1000); // Add 2 hours in milliseconds
+  await db.session.create({
+    data: {
+      user_id,
+      token,
+      expires: twoHoursLater,
+    },
+  });
+
+  // return sessionToken;
+};
+
+export const deleteSessionToken = async () => {
+  const authData = await auth();
+  if (authData) {
+    const existingToken = await getSessionByID(authData?.user.id);
+    if (existingToken) {
       await db.session.delete({
         where: {
           id: existingToken.id,
         },
       });
       await signOut();
-      return;
-    } else {
-      sessionToken = await db.session.update({
-        data: { expires },
-        where: {
-          id: existingToken.id,
-        },
-      });
     }
-  } else {
-    sessionToken = await db.session.create({
-      data: {
-        user_id,
-        token,
-        expires,
-      },
-    });
   }
-
-  return sessionToken;
 };
