@@ -166,18 +166,23 @@ export function ContinentDataTable({ continentQueryData }: any) {
     setIsLoading(true);
     const getData = async () => {
       // const data = await getcontinent();
-      if (continentQueryData?.success) {
-        setDataList(continentQueryData?.data);
-        setIsLoading(false);
-      } else if (continentQueryData?.error) {
-        setDataList([]);
-        setIsLoading(false);
-        // setError(continentQueryData?.error);
-        toast({
-          title: "Error",
-          description: continentQueryData.error,
-          variant: "destructive",
-        });
+      if (continentQueryData) {
+        if (continentQueryData?.success) {
+          setDataList(continentQueryData?.data);
+          setIsLoading(false);
+        } else if (continentQueryData?.error) {
+          setDataList([]);
+          setIsLoading(false);
+          // setError(continentQueryData?.error);
+          toast({
+            title: "Error",
+            description: continentQueryData.error,
+            variant: "destructive",
+          });
+        } else {
+          setDataList([]);
+          setIsLoading(false);
+        }
       } else {
         setDataList([]);
         setIsLoading(false);
