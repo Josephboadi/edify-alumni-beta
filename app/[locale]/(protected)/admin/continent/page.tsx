@@ -3,11 +3,13 @@ import { ContinentDataTable } from "../_components/setups/Continent";
 
 const Continent = async () => {
   const continentQueryData = await getcontinent();
-  return (
-    <div className="">
-      <ContinentDataTable continentQueryData={continentQueryData} />
-    </div>
-  );
+  if (continentQueryData && continentQueryData?.success) {
+    return (
+      <div className="">
+        <ContinentDataTable continentQueryData={continentQueryData} />
+      </div>
+    );
+  }
 };
 
 export default Continent;
