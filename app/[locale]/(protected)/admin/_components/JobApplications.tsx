@@ -11,7 +11,7 @@ import * as z from "zod";
 import Breadcrump from "./common/Breadcrump";
 
 // import { CardWrapper } from "@/components/auth/card-wrapper";
-import { getsinglejob, processjobapplication } from "@/actions/jobs";
+import { processjobapplication } from "@/actions/jobs";
 import ModalForm from "@/components/common/Modal";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -60,7 +60,7 @@ const font1 = Montserrat({
 });
 type JobPost = z.infer<typeof ProcessJobFormSchema>;
 
-export function JobApplications() {
+export function JobApplications({ jobDetailQueryData }: any) {
   const { toast } = useToast();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -130,21 +130,27 @@ export function JobApplications() {
   useEffect(() => {
     setIsLoading(true);
     const getData = async () => {
-      const data = await getsinglejob(id ? id.toString() : "");
-      if (data?.success) {
-        setDataList(data?.data?.applications);
-        setJobDetailsData(data?.data);
-        setIsLoading(false);
-      } else if (data?.error) {
-        setDataList([]);
-        setJobDetailsData(undefined);
-        setIsLoading(false);
-        // setError(data?.error);
-        toast({
-          title: "Error",
-          description: data.error,
-          variant: "destructive",
-        });
+      // const data = await getsinglejob(id ? id.toString() : "");
+      if (jobDetailQueryData) {
+        if (jobDetailQueryData?.success) {
+          setDataList(jobDetailQueryData?.data?.applications);
+          setJobDetailsData(jobDetailQueryData?.data);
+          setIsLoading(false);
+        } else if (jobDetailQueryData?.error) {
+          setDataList([]);
+          setJobDetailsData(undefined);
+          setIsLoading(false);
+          // setError(jobDetailQueryData?.error);
+          toast({
+            title: "Error",
+            description: jobDetailQueryData.error,
+            variant: "destructive",
+          });
+        } else {
+          setDataList([]);
+          setJobDetailsData(undefined);
+          setIsLoading(false);
+        }
       } else {
         setDataList([]);
         setJobDetailsData(undefined);

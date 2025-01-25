@@ -16,7 +16,7 @@ import { MdVerifiedUser } from "react-icons/md";
 import { TbAlertTriangleFilled } from "react-icons/tb";
 import ProfileDetail from "../../_components/ProfileDetail";
 import ReportDetail from "../../_components/ReportDetail";
-import { getsingleuser, getusers } from "./../../../../../actions/user";
+import { getsingleuser } from "./../../../../../actions/user";
 import { AlertButton } from "./common/alert-button";
 import { AlertCardWrapper } from "./common/alert-card-wrapper";
 import Breadcrump from "./common/Breadcrump";
@@ -25,7 +25,7 @@ import { FormButton } from "./common/form-button";
 import { ImageWrapper } from "./common/image-wrapper";
 import Table from "./common/Table";
 
-export function UserDataTable() {
+export function UserDataTable({ userQueryData }: any) {
   const { toast } = useToast();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -68,19 +68,24 @@ export function UserDataTable() {
   useEffect(() => {
     setIsLoading(true);
     const getData = async () => {
-      const data = await getusers();
-      if (data?.success) {
-        setDataList(data?.data);
-        setIsLoading(false);
-      } else if (data?.error) {
-        setDataList([]);
-        setIsLoading(false);
-        // setError(data?.error);
-        toast({
-          title: "Error",
-          description: data.error,
-          variant: "destructive",
-        });
+      // const data = await getusers();
+      if (userQueryData) {
+        if (userQueryData?.success) {
+          setDataList(userQueryData?.data);
+          setIsLoading(false);
+        } else if (userQueryData?.error) {
+          setDataList([]);
+          setIsLoading(false);
+          // setError(userQueryData?.error);
+          toast({
+            title: "Error",
+            description: userQueryData.error,
+            variant: "destructive",
+          });
+        } else {
+          setDataList([]);
+          setIsLoading(false);
+        }
       } else {
         setDataList([]);
         setIsLoading(false);

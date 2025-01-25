@@ -13,12 +13,7 @@ import { useForm } from "react-hook-form";
 import * as z from "zod";
 
 // import { CardWrapper } from "@/components/auth/card-wrapper";
-import {
-  addbatchcountry,
-  addcountry,
-  getcountry,
-  updatecountry,
-} from "@/actions/country";
+import { addbatchcountry, addcountry, updatecountry } from "@/actions/country";
 import { getsubregion } from "@/actions/sub-region";
 import DropdownSubRegion from "@/components/common/DropdownSubRegion";
 import ModalForm from "@/components/common/Modal";
@@ -64,7 +59,7 @@ export const SubRegionIDSchema = z.object({
   }),
 });
 
-export function CountryDataTable() {
+export function CountryDataTable({ countryQueryData }: any) {
   const { toast } = useToast();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -178,19 +173,24 @@ export function CountryDataTable() {
   useEffect(() => {
     setIsLoading(true);
     const getData = async () => {
-      const data = await getcountry();
-      if (data?.success) {
-        setDataList(data?.data);
-        setIsLoading(false);
-      } else if (data?.error) {
-        setDataList([]);
-        setIsLoading(false);
-        // setError(data?.error);
-        toast({
-          title: "Error",
-          description: data.error,
-          variant: "destructive",
-        });
+      // const data = await getcountry();
+      if (countryQueryData) {
+        if (countryQueryData?.success) {
+          setDataList(countryQueryData?.data);
+          setIsLoading(false);
+        } else if (countryQueryData?.error) {
+          setDataList([]);
+          setIsLoading(false);
+          // setError(countryQueryData?.error);
+          toast({
+            title: "Error",
+            description: countryQueryData.error,
+            variant: "destructive",
+          });
+        } else {
+          setDataList([]);
+          setIsLoading(false);
+        }
       } else {
         setDataList([]);
         setIsLoading(false);

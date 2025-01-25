@@ -13,11 +13,7 @@ import * as z from "zod";
 
 // import { CardWrapper } from "@/components/auth/card-wrapper";
 import { getcountry } from "@/actions/country";
-import {
-  addscholarship,
-  getscholarships,
-  updatescholarship,
-} from "@/actions/scholarships";
+import { addscholarship, updatescholarship } from "@/actions/scholarships";
 import DropdownRCountry from "@/components/common/DropdownRCountry";
 import ModalForm from "@/components/common/Modal";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -48,7 +44,7 @@ import { ImageWrapper } from "./common/image-wrapper";
 import ModalTable from "./common/ModalTable";
 import { Country } from "./setups/Country";
 
-export function ScholarshipDataTable() {
+export function ScholarshipDataTable({ scholarshipQueryData }: any) {
   const { toast } = useToast();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -248,19 +244,24 @@ export function ScholarshipDataTable() {
   useEffect(() => {
     setIsLoading(true);
     const getData = async () => {
-      const data = await getscholarships();
-      if (data?.success) {
-        setDataList(data?.data);
-        setIsLoading(false);
-      } else if (data?.error) {
-        setDataList([]);
-        setIsLoading(false);
-        // setError(data?.error);
-        toast({
-          title: "Error",
-          description: data.error,
-          variant: "destructive",
-        });
+      // const data = await getscholarships();
+      if (scholarshipQueryData) {
+        if (scholarshipQueryData?.success) {
+          setDataList(scholarshipQueryData?.data);
+          setIsLoading(false);
+        } else if (scholarshipQueryData?.error) {
+          setDataList([]);
+          setIsLoading(false);
+          // setError(scholarshipQueryData?.error);
+          toast({
+            title: "Error",
+            description: scholarshipQueryData.error,
+            variant: "destructive",
+          });
+        } else {
+          setDataList([]);
+          setIsLoading(false);
+        }
       } else {
         setDataList([]);
         setIsLoading(false);

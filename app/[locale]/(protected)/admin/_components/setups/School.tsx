@@ -14,12 +14,7 @@ import * as z from "zod";
 
 // import { CardWrapper } from "@/components/auth/card-wrapper";
 import { getcountry } from "@/actions/country";
-import {
-  addbatchschool,
-  addschool,
-  getschool,
-  updateschool,
-} from "@/actions/school";
+import { addbatchschool, addschool, updateschool } from "@/actions/school";
 import DropdownRCountry from "@/components/common/DropdownRCountry";
 import ModalForm from "@/components/common/Modal";
 import { Button } from "@/components/ui/button";
@@ -65,7 +60,7 @@ export const CountryIDSchema = z.object({
   }),
 });
 
-export function SchoolDataTable() {
+export function SchoolDataTable({ schoolQueryData }: any) {
   const { toast } = useToast();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -186,19 +181,24 @@ export function SchoolDataTable() {
   useEffect(() => {
     setIsLoading(true);
     const getData = async () => {
-      const data = await getschool();
-      if (data?.success) {
-        setDataList(data?.data);
-        setIsLoading(false);
-      } else if (data?.error) {
-        setDataList([]);
-        setIsLoading(false);
-        // setError(data?.error);
-        toast({
-          title: "Error",
-          description: data.error,
-          variant: "destructive",
-        });
+      // const data = await getschool();
+      if (schoolQueryData) {
+        if (schoolQueryData?.success) {
+          setDataList(schoolQueryData?.data);
+          setIsLoading(false);
+        } else if (schoolQueryData?.error) {
+          setDataList([]);
+          setIsLoading(false);
+          // setError(schoolQueryData?.error);
+          toast({
+            title: "Error",
+            description: schoolQueryData.error,
+            variant: "destructive",
+          });
+        } else {
+          setDataList([]);
+          setIsLoading(false);
+        }
       } else {
         setDataList([]);
         setIsLoading(false);

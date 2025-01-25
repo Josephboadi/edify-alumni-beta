@@ -11,10 +11,7 @@ import * as z from "zod";
 import Breadcrump from "./common/Breadcrump";
 
 // import { CardWrapper } from "@/components/auth/card-wrapper";
-import {
-  getsinglescholarship,
-  processscholarshipapplication,
-} from "@/actions/scholarships";
+import { processscholarshipapplication } from "@/actions/scholarships";
 import ModalForm from "@/components/common/Modal";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -63,7 +60,7 @@ const font1 = Montserrat({
 });
 type ScholarshipPost = z.infer<typeof ProcessScholarshipFormSchema>;
 
-export function ScholarshipApplications() {
+export function ScholarshipApplications({ scholarshipDetailQueryData }: any) {
   const { toast } = useToast();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -138,21 +135,27 @@ export function ScholarshipApplications() {
   useEffect(() => {
     setIsLoading(true);
     const getData = async () => {
-      const data = await getsinglescholarship(id ? id.toString() : "");
-      if (data?.success) {
-        setDataList(data?.data?.applications);
-        setScholarshipDetailsData(data?.data);
-        setIsLoading(false);
-      } else if (data?.error) {
-        setDataList([]);
-        setScholarshipDetailsData(undefined);
-        setIsLoading(false);
-        // setError(data?.error);
-        toast({
-          title: "Error",
-          description: data.error,
-          variant: "destructive",
-        });
+      // const data = await getsinglescholarship(id ? id.toString() : "");
+      if (scholarshipDetailQueryData) {
+        if (scholarshipDetailQueryData?.success) {
+          setDataList(scholarshipDetailQueryData?.data?.applications);
+          setScholarshipDetailsData(scholarshipDetailQueryData?.data);
+          setIsLoading(false);
+        } else if (scholarshipDetailQueryData?.error) {
+          setDataList([]);
+          setScholarshipDetailsData(undefined);
+          setIsLoading(false);
+          // setError(scholarshipDetailQueryData?.error);
+          toast({
+            title: "Error",
+            description: scholarshipDetailQueryData.error,
+            variant: "destructive",
+          });
+        } else {
+          setDataList([]);
+          setScholarshipDetailsData(undefined);
+          setIsLoading(false);
+        }
       } else {
         setDataList([]);
         setScholarshipDetailsData(undefined);
