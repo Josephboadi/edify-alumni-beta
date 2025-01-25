@@ -1,7 +1,6 @@
 "use server";
-import { signOut } from "@/auth";
 import { createUrl } from "@/lib/http";
-import { generateSessionToken } from "@/lib/tokens";
+import { deleteSessionToken, generateSessionToken } from "@/lib/tokens";
 import { ContinentSchema } from "@/schemas";
 import axios from "axios";
 import * as z from "zod";
@@ -56,13 +55,13 @@ export const addcontinent = async (
       return { error: "Something went wrong adding new continent" };
     }
   } else if (result?.data?.status == 10) {
-    await signOut();
+    await deleteSessionToken();
     return { error: result?.data?.message };
   } else {
     return { error: "Something went wrong adding new continent" };
   }
   // } else {
-  //   await signOut();
+  //   await deleteSessionToken();
   //   return { error: data.error };
   // }
 };
@@ -101,7 +100,7 @@ export const addbatchcontinent = async (values: Continents[], locale: any) => {
       return { error: "Something went wrong adding new continents" };
     }
   } else if (result?.data?.status == 10) {
-    await signOut();
+    await deleteSessionToken();
     return { error: result?.data?.message };
   } else {
     return { error: "Something went wrong adding new continents" };
@@ -156,13 +155,13 @@ export const updatecontinent = async (
       return { error: "Something went wrong updating continent" };
     }
   } else if (result?.data?.status == 10) {
-    await signOut();
+    await deleteSessionToken();
     return { error: result?.data?.message };
   } else {
     return { error: "Something went wrong updating continent" };
   }
   // } else {
-  //   await signOut();
+  //   await deleteSessionToken();
   //   return { error: data.error };
   // }
 };
@@ -196,7 +195,7 @@ export const getcontinent = async () => {
       data: result?.data?.data,
     };
   } else if (result?.data?.status == 10) {
-    await signOut();
+    await deleteSessionToken();
     return { error: result?.data?.message };
   } else {
     return { error: "Error getting data" };
