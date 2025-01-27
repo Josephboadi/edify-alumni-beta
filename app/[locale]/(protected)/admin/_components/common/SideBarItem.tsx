@@ -87,16 +87,21 @@ const SideBarItem = ({
             (param.id && mouseCLick === `${menu?.path}/${param.id}`)) &&
           "bg-slate-100 !text-[var(--clr-black)]"
         }`}
-        onClick={() => {
-          highlightMenu(menu?.path);
-          !menu.isChild && subToggle("");
-          setToggleSide();
-        }}
+        // onClick={() => {
+        //   highlightMenu(menu?.path);
+        //   !menu.isChild && subToggle("");
+        //   setToggleSide();
+        // }}
       >
         <Link
           href={`${menu.path}`}
           className="flex items-center gap-3 "
           passHref
+          onClick={() => {
+            highlightMenu(menu?.path);
+            !menu.isChild && subToggle("");
+            setToggleSide();
+          }}
         >
           <DynamicIcons
             name={menu?.icon}

@@ -119,7 +119,14 @@ export const generateSessionToken = async () => {
 };
 
 export const createSessionToken = async (user_id: string) => {
-  // let sessionToken;
+  const existingToken = await getSessionByID(user_id);
+  if (existingToken) {
+    await db.session.delete({
+      where: {
+        id: existingToken.id,
+      },
+    });
+  }
   const token = await createToken();
   const now = new Date(); // Current date and time
   const twoHoursLater = new Date(now.getTime() + 2 * 60 * 60 * 1000); // Add 2 hours in milliseconds
