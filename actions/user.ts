@@ -1,17 +1,12 @@
 "use server";
-import { auth, signOut } from "@/auth";
-import { getSessionByID } from "@/data/session-id";
 import { createUrl } from "@/lib/http";
+import { deleteSessionToken, generateSessionToken } from "@/lib/tokens";
 import axios from "axios";
 
 const apiUrl = process.env.API_URL!;
 
-export const getsingleuser = async (
-  locale: any,
-  id: string
-) => {
-  const authData = await auth();
-  const existingToken = await getSessionByID(authData?.user?.id || "");
+export const getsingleuser = async (locale: any, id: string) => {
+  const existingToken = await generateSessionToken();
 
   if (!id) {
     return { error: "User id is required!" };
@@ -27,7 +22,7 @@ export const getsingleuser = async (
       return config;
     },
     (error) => {
-      return Promise.reject(error);
+      return { error: "Admin error!!!!!" };
     }
   );
 
@@ -43,7 +38,7 @@ export const getsingleuser = async (
       data: result?.data?.data,
     };
   } else if (result?.data?.status == 10) {
-    await signOut();
+    await deleteSessionToken();
     return { error: result?.data?.message };
   } else {
     return { error: "Something went wrong getting user data" };
@@ -51,8 +46,7 @@ export const getsingleuser = async (
 };
 
 export const getusers = async () => {
-  const authData = await auth();
-  const existingToken = await getSessionByID(authData?.user?.id || "");
+  const existingToken = await generateSessionToken();
 
   axios.interceptors.request.use(
     (config) => {
@@ -64,7 +58,7 @@ export const getusers = async () => {
       return config;
     },
     (error) => {
-      return Promise.reject(error);
+      return { error: "Admin error!!!!!" };
     }
   );
 
@@ -80,7 +74,7 @@ export const getusers = async () => {
       data: result?.data?.data,
     };
   } else if (result?.data?.status == 10) {
-    await signOut();
+    await deleteSessionToken();
     return { error: result?.data?.message };
   } else {
     return { error: "Error getting data" };

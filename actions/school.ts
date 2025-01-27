@@ -1,7 +1,6 @@
 "use server";
-import { auth, signOut } from "@/auth";
-import { getSessionByID } from "@/data/session-id";
 import { createUrl } from "@/lib/http";
+import { deleteSessionToken, generateSessionToken } from "@/lib/tokens";
 import { SchoolSchema } from "@/schemas";
 import axios from "axios";
 import * as z from "zod";
@@ -19,9 +18,7 @@ export const addschool = async (
   values: z.infer<typeof SchoolSchema>,
   locale: any
 ) => {
-  const authData = await auth();
-  const existingToken = await getSessionByID(authData?.user?.id || "");
-  // const data = await verifyAuth(authData?.user?.token || "");
+  const existingToken = await generateSessionToken();
 
   // if (data.success) {
   const validatedFields = SchoolSchema.safeParse(values);
@@ -72,20 +69,15 @@ export const addschool = async (
       return { error: "Something went wrong adding new School" };
     }
   } else if (result?.data?.status == 10) {
-    await signOut();
+    await deleteSessionToken();
     return { error: result?.data?.message };
   } else {
     return { error: "Something went wrong adding new School" };
   }
-  // } else {
-  //   await signOut();
-  //   return { error: data.error };
-  // }
 };
 
 export const addbatchschool = async (values: Schools[], locale: any) => {
-  const authData = await auth();
-  const existingToken = await getSessionByID(authData?.user?.id || "");
+  const existingToken = await generateSessionToken();
 
   axios.interceptors.request.use(
     (config) => {
@@ -118,7 +110,7 @@ export const addbatchschool = async (values: Schools[], locale: any) => {
       return { error: "Something went wrong adding new schools" };
     }
   } else if (result?.data?.status == 10) {
-    await signOut();
+    await deleteSessionToken();
     return { error: result?.data?.message };
   } else {
     return { error: "Something went wrong adding new schools" };
@@ -130,9 +122,7 @@ export const updateschool = async (
   locale: any,
   id: string
 ) => {
-  const authData = await auth();
-  const existingToken = await getSessionByID(authData?.user?.id || "");
-  // const data = await verifyAuth(authData?.user?.token || "");
+  const existingToken = await generateSessionToken();
 
   // if (data.success) {
   const validatedFields = SchoolSchema.safeParse(values);
@@ -184,20 +174,15 @@ export const updateschool = async (
       return { error: "Something went wrong updating school" };
     }
   } else if (result?.data?.status == 10) {
-    await signOut();
+    await deleteSessionToken();
     return { error: result?.data?.message };
   } else {
     return { error: "Something went wrong updating school" };
   }
-  // } else {
-  //   await signOut();
-  //   return { error: data.error };
-  // }
 };
 
 export const getschool = async () => {
-  const authData = await auth();
-  const existingToken = await getSessionByID(authData?.user?.id || "");
+  const existingToken = await generateSessionToken();
 
   axios.interceptors.request.use(
     (config) => {
@@ -209,7 +194,7 @@ export const getschool = async () => {
       return config;
     },
     (error) => {
-      return Promise.reject(error);
+      return { error: "Admin error!!!!!" };
     }
   );
 
@@ -225,7 +210,7 @@ export const getschool = async () => {
       data: result?.data?.data,
     };
   } else if (result?.data?.status == 10) {
-    await signOut();
+    await deleteSessionToken();
     return { error: result?.data?.message };
   } else {
     return { error: "Error getting data" };
@@ -233,8 +218,7 @@ export const getschool = async () => {
 };
 
 export const getunschool = async () => {
-  const authData = await auth();
-  const existingToken = await getSessionByID(authData?.user?.id || "");
+  const existingToken = await generateSessionToken();
 
   axios.interceptors.request.use(
     (config) => {
@@ -246,7 +230,7 @@ export const getunschool = async () => {
       return config;
     },
     (error) => {
-      return Promise.reject(error);
+      return { error: "Admin error!!!!!" };
     }
   );
 
@@ -262,7 +246,7 @@ export const getunschool = async () => {
       data: result?.data?.data,
     };
   } else if (result?.data?.status == 10) {
-    await signOut();
+    await deleteSessionToken();
     return { error: result?.data?.message };
   } else {
     return { error: "Error getting data" };

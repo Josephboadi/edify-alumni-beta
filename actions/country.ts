@@ -1,7 +1,6 @@
 "use server";
-import { auth, signOut } from "@/auth";
-import { getSessionByID } from "@/data/session-id";
 import { createUrl } from "@/lib/http";
+import { deleteSessionToken, generateSessionToken } from "@/lib/tokens";
 import { CountrySchema } from "@/schemas";
 import axios from "axios";
 import * as z from "zod";
@@ -18,9 +17,7 @@ export const addcountry = async (
   values: z.infer<typeof CountrySchema>,
   locale: any
 ) => {
-  const authData = await auth();
-  const existingToken = await getSessionByID(authData?.user?.id || "");
-  // const data = await verifyAuth(authData?.user?.token || "");
+  const existingToken = await generateSessionToken();
 
   // if (data.success) {
   const validatedFields = CountrySchema.safeParse(values);
@@ -66,21 +63,15 @@ export const addcountry = async (
       return { error: "Something went wrong adding new Country" };
     }
   } else if (result?.data?.status == 10) {
-    await signOut();
+    await deleteSessionToken();
     return { error: result?.data?.message };
   } else {
     return { error: "Something went wrong adding new Country" };
   }
-  // } else {
-  //   await signOut();
-  //   return { error: data.error };
-  // }
 };
 
 export const addbatchcountry = async (values: Countries[], locale: any) => {
-  const authData = await auth();
-  const existingToken = await getSessionByID(authData?.user?.id || "");
-
+  const existingToken = await generateSessionToken();
   axios.interceptors.request.use(
     (config) => {
       const { origin } = new URL(config.url!);
@@ -112,7 +103,7 @@ export const addbatchcountry = async (values: Countries[], locale: any) => {
       return { error: "Something went wrong adding new countries" };
     }
   } else if (result?.data?.status == 10) {
-    await signOut();
+    await deleteSessionToken();
     return { error: result?.data?.message };
   } else {
     return { error: "Something went wrong adding new countries" };
@@ -124,9 +115,7 @@ export const updatecountry = async (
   locale: any,
   id: string
 ) => {
-  const authData = await auth();
-  const existingToken = await getSessionByID(authData?.user?.id || "");
-  // const data = await verifyAuth(authData?.user?.token || "");
+  const existingToken = await generateSessionToken();
 
   // if (data.success) {
   const validatedFields = CountrySchema.safeParse(values);
@@ -173,20 +162,15 @@ export const updatecountry = async (
       return { error: "Something went wrong updating country" };
     }
   } else if (result?.data?.status == 10) {
-    await signOut();
+    await deleteSessionToken();
     return { error: result?.data?.message };
   } else {
     return { error: "Something went wrong updating country" };
   }
-  // } else {
-  //   await signOut();
-  //   return { error: data.error };
-  // }
 };
 
 export const getcountry = async () => {
-  const authData = await auth();
-  const existingToken = await getSessionByID(authData?.user?.id || "");
+  const existingToken = await generateSessionToken();
 
   axios.interceptors.request.use(
     (config) => {
@@ -198,7 +182,7 @@ export const getcountry = async () => {
       return config;
     },
     (error) => {
-      return Promise.reject(error);
+      return { error: "Admin error!!!!!" };
     }
   );
 
@@ -214,7 +198,7 @@ export const getcountry = async () => {
       data: result?.data?.data,
     };
   } else if (result?.data?.status == 10) {
-    await signOut();
+    await deleteSessionToken();
     return { error: result?.data?.message };
   } else {
     return { error: "Error getting data" };

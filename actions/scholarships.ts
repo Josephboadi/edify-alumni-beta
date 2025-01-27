@@ -1,7 +1,6 @@
 "use server";
-import { auth, signOut } from "@/auth";
-import { getSessionByID } from "@/data/session-id";
 import { createUrl } from "@/lib/http";
+import { deleteSessionToken, generateSessionToken } from "@/lib/tokens";
 import { ProcessScholarshipFormSchema, ScholarshipFormSchema } from "@/schemas";
 import axios from "axios";
 import * as z from "zod";
@@ -12,8 +11,7 @@ export const addscholarship = async (
   values: z.infer<typeof ScholarshipFormSchema>,
   locale: any
 ) => {
-  const authData = await auth();
-  const existingToken = await getSessionByID(authData?.user?.id || "");
+  const existingToken = await generateSessionToken();
   const validatedFields = ScholarshipFormSchema.safeParse(values);
   if (!validatedFields.success) {
     return { error: "Invalid fields!" };
@@ -57,7 +55,7 @@ export const addscholarship = async (
       return { error: "Something went wrong adding new scholarship" };
     }
   } else if (result?.data?.status == 10) {
-    await signOut();
+    await deleteSessionToken();
     return { error: result?.data?.message };
   } else {
     return { error: "Something went wrong adding new scholarship" };
@@ -69,8 +67,7 @@ export const updatescholarship = async (
   locale: any,
   id: string
 ) => {
-  const authData = await auth();
-  const existingToken = await getSessionByID(authData?.user?.id || "");
+  const existingToken = await generateSessionToken();
   const validatedFields = ScholarshipFormSchema.safeParse(values);
   if (!validatedFields.success) {
     return { error: "Invalid fields!" };
@@ -115,7 +112,7 @@ export const updatescholarship = async (
       return { error: "Something went wrong updating scholarship" };
     }
   } else if (result?.data?.status == 10) {
-    await signOut();
+    await deleteSessionToken();
     return { error: result?.data?.message };
   } else {
     return { error: "Something went wrong updating scholarship" };
@@ -126,8 +123,7 @@ export const processscholarshipapplication = async (
   values: z.infer<typeof ProcessScholarshipFormSchema>,
   locale: any
 ) => {
-  const authData = await auth();
-  const existingToken = await getSessionByID(authData?.user?.id || "");
+  const existingToken = await generateSessionToken();
   const validatedFields = ProcessScholarshipFormSchema.safeParse(values);
   if (!validatedFields.success) {
     return { error: "Invalid fields!" };
@@ -173,7 +169,7 @@ export const processscholarshipapplication = async (
       };
     }
   } else if (result?.data?.status == 10) {
-    await signOut();
+    await deleteSessionToken();
     return { error: result?.data?.message };
   } else {
     return {
@@ -183,8 +179,7 @@ export const processscholarshipapplication = async (
 };
 
 export const getsinglescholarship = async (id: string) => {
-  const authData = await auth();
-  const existingToken = await getSessionByID(authData?.user?.id || "");
+  const existingToken = await generateSessionToken();
 
   if (!id) {
     return { error: "User id is required!" };
@@ -200,7 +195,7 @@ export const getsinglescholarship = async (id: string) => {
       return config;
     },
     (error) => {
-      return Promise.reject(error);
+      return { error: "Admin error!!!!!" };
     }
   );
 
@@ -216,7 +211,7 @@ export const getsinglescholarship = async (id: string) => {
       data: result?.data?.data,
     };
   } else if (result?.data?.status == 10) {
-    await signOut();
+    await deleteSessionToken();
     return { error: result?.data?.message };
   } else {
     return { error: "Something went wrong getting scholarship data" };
@@ -224,8 +219,7 @@ export const getsinglescholarship = async (id: string) => {
 };
 
 export const getscholarships = async () => {
-  const authData = await auth();
-  const existingToken = await getSessionByID(authData?.user?.id || "");
+  const existingToken = await generateSessionToken();
 
   axios.interceptors.request.use(
     (config) => {
@@ -237,7 +231,7 @@ export const getscholarships = async () => {
       return config;
     },
     (error) => {
-      return Promise.reject(error);
+      return { error: "Admin error!!!!!" };
     }
   );
 
@@ -253,7 +247,7 @@ export const getscholarships = async () => {
       data: result?.data?.data,
     };
   } else if (result?.data?.status == 10) {
-    await signOut();
+    await deleteSessionToken();
     return { error: result?.data?.message };
   } else {
     return { error: "Error getting data" };

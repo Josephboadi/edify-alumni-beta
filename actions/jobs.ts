@@ -1,7 +1,6 @@
 "use server";
-import { auth, signOut } from "@/auth";
-import { getSessionByID } from "@/data/session-id";
 import { createUrl } from "@/lib/http";
+import { deleteSessionToken, generateSessionToken } from "@/lib/tokens";
 import { NewJobFormSchema, ProcessJobFormSchema } from "@/schemas";
 import axios from "axios";
 import * as z from "zod";
@@ -12,8 +11,7 @@ export const addjob = async (
   values: z.infer<typeof NewJobFormSchema>,
   locale: any
 ) => {
-  const authData = await auth();
-  const existingToken = await getSessionByID(authData?.user?.id || "");
+  const existingToken = await generateSessionToken();
   const validatedFields = NewJobFormSchema.safeParse(values);
   if (!validatedFields.success) {
     return { error: "Invalid fields!" };
@@ -77,7 +75,7 @@ export const addjob = async (
       return { error: "Something went wrong adding new job" };
     }
   } else if (result?.data?.status == 10) {
-    await signOut();
+    await deleteSessionToken();
     return { error: result?.data?.message };
   } else {
     return { error: "Something went wrong adding new job" };
@@ -89,8 +87,7 @@ export const updatejob = async (
   locale: any,
   id: string
 ) => {
-  const authData = await auth();
-  const existingToken = await getSessionByID(authData?.user?.id || "");
+  const existingToken = await generateSessionToken();
   const validatedFields = NewJobFormSchema.safeParse(values);
   if (!validatedFields.success) {
     return { error: "Invalid fields!" };
@@ -153,7 +150,7 @@ export const updatejob = async (
       return { error: "Something went wrong updating job" };
     }
   } else if (result?.data?.status == 10) {
-    await signOut();
+    await deleteSessionToken();
     return { error: result?.data?.message };
   } else {
     return { error: "Something went wrong updating job" };
@@ -164,8 +161,7 @@ export const processjobapplication = async (
   values: z.infer<typeof ProcessJobFormSchema>,
   locale: any
 ) => {
-  const authData = await auth();
-  const existingToken = await getSessionByID(authData?.user?.id || "");
+  const existingToken = await generateSessionToken();
   const validatedFields = ProcessJobFormSchema.safeParse(values);
   if (!validatedFields.success) {
     return { error: "Invalid fields!" };
@@ -207,7 +203,7 @@ export const processjobapplication = async (
       return { error: "Something went wrong processing this job application" };
     }
   } else if (result?.data?.status == 10) {
-    await signOut();
+    await deleteSessionToken();
     return { error: result?.data?.message };
   } else {
     return { error: "Something went wrong processing this job application" };
@@ -215,8 +211,7 @@ export const processjobapplication = async (
 };
 
 export const getsinglejob = async (id: string) => {
-  const authData = await auth();
-  const existingToken = await getSessionByID(authData?.user?.id || "");
+  const existingToken = await generateSessionToken();
 
   if (!id) {
     return { error: "User id is required!" };
@@ -232,7 +227,7 @@ export const getsinglejob = async (id: string) => {
       return config;
     },
     (error) => {
-      return Promise.reject(error);
+      return { error: "Admin error!!!!!" };
     }
   );
 
@@ -248,7 +243,7 @@ export const getsinglejob = async (id: string) => {
       data: result?.data?.data,
     };
   } else if (result?.data?.status == 10) {
-    await signOut();
+    await deleteSessionToken();
     return { error: result?.data?.message };
   } else {
     return { error: "Something went wrong getting job data" };
@@ -256,8 +251,7 @@ export const getsinglejob = async (id: string) => {
 };
 
 export const getjobs = async () => {
-  const authData = await auth();
-  const existingToken = await getSessionByID(authData?.user?.id || "");
+  const existingToken = await generateSessionToken();
 
   axios.interceptors.request.use(
     (config) => {
@@ -271,7 +265,7 @@ export const getjobs = async () => {
     },
     (error) => {
       console.log(error);
-      return Promise.reject(error);
+      return { error: "Admin error!!!!!" };
     }
   );
 
@@ -287,7 +281,7 @@ export const getjobs = async () => {
       data: result?.data?.data,
     };
   } else if (result?.data?.status == 10) {
-    await signOut();
+    await deleteSessionToken();
     return { error: result?.data?.message };
   } else {
     return { error: "Error getting data" };

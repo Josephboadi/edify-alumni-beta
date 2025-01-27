@@ -1,7 +1,6 @@
 "use server";
-import { auth, signOut } from "@/auth";
-import { getSessionByID } from "@/data/session-id";
 import { createUrl } from "@/lib/http";
+import { deleteSessionToken, generateSessionToken } from "@/lib/tokens";
 import { SubRegionSchema } from "@/schemas";
 import axios from "axios";
 import * as z from "zod";
@@ -17,9 +16,7 @@ export const addsubregion = async (
   values: z.infer<typeof SubRegionSchema>,
   locale: any
 ) => {
-  const authData = await auth();
-  const existingToken = await getSessionByID(authData?.user?.id || "");
-  // const data = await verifyAuth(authData?.user?.token || "");
+  const existingToken = await generateSessionToken();
 
   // if (data.success) {
   const validatedFields = SubRegionSchema.safeParse(values);
@@ -62,20 +59,15 @@ export const addsubregion = async (
       return { error: "Something went wrong adding new Sub-region" };
     }
   } else if (result?.data?.status == 10) {
-    await signOut();
+    await deleteSessionToken();
     return { error: result?.data?.message };
   } else {
     return { error: "Something went wrong adding new Sub-region" };
   }
-  // } else {
-  //   await signOut();
-  //   return { error: data.error };
-  // }
 };
 
 export const addbatchsubregion = async (values: SubRegions[], locale: any) => {
-  const authData = await auth();
-  const existingToken = await getSessionByID(authData?.user?.id || "");
+  const existingToken = await generateSessionToken();
 
   axios.interceptors.request.use(
     (config) => {
@@ -108,7 +100,7 @@ export const addbatchsubregion = async (values: SubRegions[], locale: any) => {
       return { error: "Something went wrong adding new sub-continents" };
     }
   } else if (result?.data?.status == 10) {
-    await signOut();
+    await deleteSessionToken();
     return { error: result?.data?.message };
   } else {
     return { error: "Something went wrong adding new sub-continents" };
@@ -120,9 +112,7 @@ export const updatesubregion = async (
   locale: any,
   id: string
 ) => {
-  const authData = await auth();
-  const existingToken = await getSessionByID(authData?.user?.id || "");
-  // const data = await verifyAuth(authData?.user?.token || "");
+  const existingToken = await generateSessionToken();
 
   // if (data.success) {
   const validatedFields = SubRegionSchema.safeParse(values);
@@ -166,20 +156,15 @@ export const updatesubregion = async (
       return { error: "Something went wrong updating continent" };
     }
   } else if (result?.data?.status == 10) {
-    await signOut();
+    await deleteSessionToken();
     return { error: result?.data?.message };
   } else {
     return { error: "Something went wrong updating continent" };
   }
-  // } else {
-  //   await signOut();
-  //   return { error: data.error };
-  // }
 };
 
 export const getsubregion = async () => {
-  const authData = await auth();
-  const existingToken = await getSessionByID(authData?.user?.id || "");
+  const existingToken = await generateSessionToken();
 
   axios.interceptors.request.use(
     (config) => {
@@ -207,7 +192,7 @@ export const getsubregion = async () => {
       data: result?.data?.data,
     };
   } else if (result?.data?.status == 10) {
-    await signOut();
+    await deleteSessionToken();
     return { error: result?.data?.message };
   } else {
     return { error: "Error getting data" };

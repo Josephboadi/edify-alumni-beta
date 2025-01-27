@@ -179,11 +179,7 @@ export const getcontinent = async () => {
       return config;
     },
     (error) => {
-      console.log(
-        "Axios error============================================, ",
-        error
-      );
-      return { error: "Axios error!!!!!" };
+      return { error: "Admin error!!!!!" };
       // return Promise.reject(error);
     }
   );
