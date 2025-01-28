@@ -129,7 +129,7 @@ export const LoginForm = () => {
                         {...field}
                         disabled={isPending}
                         placeholder="123456"
-                        className={` bg-[var(--clr-silver-v7)] ${
+                        className={` bg-[var(--clr-silver-v6)] ${
                           form.formState.errors.code
                             ? "border border-red-500 focus-visible:ring-1"
                             : "focus-visible:ring-transparent border-none"
@@ -155,7 +155,7 @@ export const LoginForm = () => {
                           disabled={isPending}
                           placeholder="john.doe@example.com"
                           type="email"
-                          className={` bg-[var(--clr-silver-v7)] ${
+                          className={` bg-[var(--clr-silver-v6)] ${
                             form.formState.errors.email
                               ? "border border-red-500 focus-visible:ring-0"
                               : "focus-visible:ring-transparent border-none"

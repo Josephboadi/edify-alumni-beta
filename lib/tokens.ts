@@ -101,6 +101,7 @@ export const generateSessionToken = async () => {
           },
         });
         await signOut();
+        window.location.reload();
         return;
       } else {
         const now = new Date(); // Current date and time
@@ -152,6 +153,7 @@ export const deleteSessionToken = async () => {
         },
       });
       await signOut();
+      window.location.reload();
     }
   }
 };
