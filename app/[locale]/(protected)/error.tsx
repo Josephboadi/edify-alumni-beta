@@ -12,6 +12,7 @@ function ErrorPage({ error }: { error: Error }) {
   return (
     <div className="flex w-full h-[100vh] flex-col items-center justify-center gap-4">
       <h2 className="text-destructive text-4xl">Something went wrong!</h2>
+      <p>{error.toString()}</p>
       <Button
         asChild
         className="bg-[var(--clr-secondary)] text-[var(--clr-primary)]"

@@ -44,6 +44,8 @@ export default auth(async (req) => {
     "/en",
     `/auth/new-verification`,
     `${language}/auth/new-verification`,
+    `/api`,
+    `${language}/api`,
     `/api/uploadthing`,
     `${language}/api/uploadthing`,
   ];

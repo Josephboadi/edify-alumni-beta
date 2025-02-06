@@ -278,6 +278,61 @@ export const ProcessScholarshipFormSchema = z.object({
   processComment: z.string(),
 });
 
+export const NewEventFormSchema = z.object({
+  // eventDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, {
+  //   message: "eventDate must be in the format YYYY-MM-DD",
+  // }), // Ensures proper date format
+  // eventStartTime: z.string().regex(/^\d{2}:\d{2}:\d{2}$/, {
+  //   message: "eventStartTime must be in the format HH:mm:ss",
+  // }), // Ensures proper time format
+  // eventEndTime: z.string().regex(/^\d{2}:\d{2}:\d{2}$/, {
+  //   message: "eventEndTime must be in the format HH:mm:ss",
+  // }), // Ensures proper time format
+  eventDate: z.date(),
+  eventStartTime: z.date(),
+  eventEndTime: z.date(),
+  eventTitle: z.string().min(1, { message: "eventTitle cannot be empty" }), // Title must not be empty
+  eventDescription: z
+    .string()
+    .min(1, { message: "eventDescription cannot be empty" }), // Description must not be empty
+  eventLocation: z
+    .string()
+    .min(1, { message: "eventLocation cannot be empty" }), // Location must not be empty
+  eventCoverImage: z
+    .string()
+    .min(1, { message: "eventCoverImage cannot be empty" }), // Image filename cannot be empty
+  eventHashTag: z.array(
+    z.string().regex(/^#\w+$/, {
+      message: "Each hashtag must start with '#' and contain valid characters",
+    })
+  ), // Ensures hashtags start with '#' and contain valid characters
+});
+
+export type NewEventFormFinalSchema = {
+  eventDate: string; // Format: YYYY-MM-DD
+  eventStartTime: string; // Format: HH:mm:ss
+  eventEndTime: string; // Format: HH:mm:ss
+  eventTitle: string;
+  eventDescription: string;
+  eventLocation: string;
+  eventCoverImage: string;
+  eventHashTag: string[];
+};
+
+export const BookEventSchema = z.object({
+  user_id: z.string().min(1, { message: "user_id cannot be empty" }), // Non-empty string
+  event_id: z.string().uuid({ message: "event_id must be a valid UUID" }), // Valid UUID
+});
+
+export const NewDiscussionFormSchema = z.object({
+  topic: z.string().min(1, { message: "topic cannot be empty" }), // Non-empty string
+  cover_image: z.string().optional(), // Optional string for cover image
+});
+
+export const AddDiscussionCommentSchema = z.object({
+  message: z.string().min(1, { message: "message cannot be empty" }), // Non-empty string
+});
+
 export const DiscussionFormSchema = z.object({
   topic: z.string().min(3, "Title must be at least 3 characters"),
   createdBy: z.string(),
@@ -795,5 +850,189 @@ export type ScholarshipApplicationsData = {
     numberOfDeclined: number;
     date_added: string;
     cover_image_url: string;
+  };
+};
+
+export type EventInfoData = {
+  id: number;
+  event_id: string;
+  date_added: string; // ISO 8601 date-time string
+  status: number;
+  eventDate: string; // ISO 8601 date-time string
+  eventStartTime: string; // Time string in HH:mm:ss format
+  eventEndTime: string; // Time string in HH:mm:ss format
+  eventTitle: string;
+  eventDescription: string;
+  eventLocation: string;
+  eventCoverImage: string;
+  eventHashTag: string[];
+  added_by_id: string;
+  added_by: {
+    id: string;
+    user_id: string;
+    name: string;
+    phone_numbers: string;
+    email: string;
+    address: string | null;
+    date_added: string | null; // ISO 8601 date-time string or null
+    status: number;
+    date_activated: string | null; // ISO 8601 date-time string or null
+    year: string;
+    school_id: string;
+    country_of_res_id: string;
+    emailVerified: string; // ISO 8601 date-time string
+    image: string | null;
+    imageObj: string | null;
+    password: string;
+    role: "USER" | "ADMIN" | "OTHER"; // Can expand based on roles
+    isTwoFactorEnabled: boolean;
+  };
+  bookings: {
+    id: number;
+    booking_id: string;
+    date_added: string; // ISO 8601 date-time string
+    status: number;
+    user_id: string;
+    event_id: string;
+    event: {
+      id: number;
+      event_id: string;
+      date_added: string; // ISO 8601 date-time string
+      status: number;
+      eventDate: string; // ISO 8601 date-time string
+      eventStartTime: string; // Time string in HH:mm:ss format
+      eventEndTime: string; // Time string in HH:mm:ss format
+      eventTitle: string;
+      eventDescription: string;
+      eventLocation: string;
+      eventCoverImage: string;
+      eventHashTag: string[];
+      added_by_id: string;
+    };
+  };
+};
+
+export type UserEventBookingData = {
+  id: number;
+  booking_id: string;
+  date_added: string; // ISO 8601 date-time string
+  status: number;
+  user_id: string;
+  event_id: string;
+  event: {
+    id: number;
+    event_id: string;
+    date_added: string; // ISO 8601 date-time string
+    status: number;
+    eventDate: string; // ISO 8601 date-time string
+    eventStartTime: string; // Time string in HH:mm:ss format
+    eventEndTime: string; // Time string in HH:mm:ss format
+    eventTitle: string;
+    eventDescription: string;
+    eventLocation: string;
+    eventCoverImage: string;
+    eventHashTag: string[];
+    added_by_id: string;
+  };
+  user: {
+    id: string;
+    user_id: string;
+    name: string;
+    phone_numbers: string;
+    email: string;
+    address: string | null;
+    date_added: string | null; // ISO 8601 date-time string or null
+    status: number;
+    date_activated: string | null; // ISO 8601 date-time string or null
+    year: string;
+    school_id: string;
+    country_of_res_id: string;
+    emailVerified: string; // ISO 8601 date-time string
+    image: string | null;
+    imageObj: string | null;
+    password: string;
+    role: "USER" | "ADMIN" | "OTHER"; // Can expand based on roles
+    isTwoFactorEnabled: boolean;
+  };
+};
+
+export type DiscussionInfoData = {
+  id: number;
+  discussion_id: string;
+  topic: string;
+  status: number;
+  date_added: string;
+  added_by_id: string;
+  cover_image: string;
+  added_by: {
+    id: string;
+    user_id: string;
+    name: string;
+    phone_numbers: string;
+    email: string;
+    address: string | null;
+    date_added: string | null;
+    status: number;
+    date_activated: string | null;
+    year: string;
+    school_id: string;
+    country_of_res_id: string;
+    emailVerified: string;
+    image: string | null;
+    imageObj: any | null;
+    // password: string;
+    role: "USER" | "ADMIN" | "MODERATOR"; // Adjust based on possible roles
+    isTwoFactorEnabled: boolean;
+  };
+  _count: {
+    messages: number;
+  };
+};
+
+export type DiscussionMessagesInfoData = {
+  id: number;
+  discussion_id: string;
+  topic: string;
+  status: number;
+  date_added: string;
+  added_by_id: string;
+  cover_image: string;
+  messages: {
+    id: number;
+    message_id: string;
+    message: string;
+    date_added: string;
+    status: number;
+    user_id: string;
+    discussion_id: string;
+    user: {
+      id: number;
+      discussion_id: string;
+      topic: string;
+      status: number;
+      date_added: string;
+      added_by_id: string;
+      cover_image: string;
+    };
+  }[];
+  added_by: {
+    id: string;
+    user_id: string;
+    name: string;
+    phone_numbers: string;
+    email: string;
+    address: string | null;
+    date_added: string | null;
+    status: number;
+    date_activated: string | null;
+    year: string;
+    school_id: string;
+    country_of_res_id: string;
+    emailVerified: string;
+    image: string | null;
+    imageObj: any | null;
+    // password: string;
+    role: "USER" | "ADMIN" | "MODERATOR"; // Adjust roles as needed
+    isTwoFactorEnabled: boolean;
   };
 };

@@ -276,6 +276,10 @@ model User {
   processedBy          userJobApplications[] @relation(name: "processedBy")
   scholarships userScholarshipApplications[]
   scholarshipsProcessed  userScholarshipApplications[]  @relation(name: "scholarshipsProcessed")
+  EventsAdded Event[]
+  EventBookings EventBooking[]
+  DiscussionsAdded Discussion[]
+  discussionMessages DiscussionMessage[]
 }
 
 model user_employment {
@@ -470,7 +474,65 @@ model userScholarshipApplications{
   date_processed    DateTime?  @default(now())
 }
 
+model Event{
+  id      Int  @default(autoincrement())
+  event_id   String   @id @default(uuid())
+  date_added    DateTime  @default(now())
+  status    Int      @default(1)
+  eventDate DateTime
+  eventStartTime String
+  eventEndTime String
+  eventTitle String
+  eventDescription String
+  eventLocation String
+  eventCoverImage String
+  eventHashTag String[]
+  added_by_id String
+  added_by User @relation(fields: [added_by_id], references: [id])
+  bookings EventBooking[]
+}
 
+model EventBooking{
+ id      Int  @default(autoincrement())
+ booking_id   String   @id @default(uuid())
+ date_added    DateTime  @default(now())
+ status Int @default(1)
+ user_id String
+ event_id String
+
+event Event @relation(fields: [event_id], references: [event_id])
+user User @relation(fields: [user_id], references: [id])
+
+@@unique([event_id,user_id])
+}
+
+
+model Discussion{
+  id      Int  @default(autoincrement())
+  discussion_id   String   @id @default(uuid())
+  topic String
+  status Int @default(1)
+  date_added    DateTime  @default(now())
+  added_by_id String
+  cover_image String?
+  added_by User @relation(fields: [added_by_id], references: [id])
+
+  messages DiscussionMessage[]
+}
+
+
+model DiscussionMessage{
+  id      Int  @default(autoincrement())
+  message_id   String   @id @default(uuid())
+  message String
+  date_added    DateTime  @default(now())
+  status Int @default(1)
+  user_id String
+  discussion_id String
+
+  user Discussion @relation(fields: [discussion_id], references: [discussion_id])
+  discussion User @relation(fields: [user_id], references: [id])
+}
 
 enum UserRole {
   ADMIN

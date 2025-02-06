@@ -2,7 +2,7 @@
 
 import ToolTip from "@/components/common/ToolTip";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { usePathname, useSearchParams } from "next/navigation";
+import { useParams, usePathname, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState, useTransition } from "react";
 import { TableColumn } from "react-data-table-component";
 import DatePicker from "react-datepicker";
@@ -13,10 +13,10 @@ import * as z from "zod";
 import Breadcrump from "./common/Breadcrump";
 
 // import { CardWrapper } from "@/components/auth/card-wrapper";
+import { addevent, updateevent } from "@/actions/event";
 import ModalForm from "@/components/common/Modal";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
   Form,
   FormControl,
@@ -27,9 +27,9 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { eventsList } from "@/lib/eventlist";
+import { useToast } from "@/components/ui/use-toast";
 import { useUploadThing } from "@/lib/uploadthing";
-import { EventData, EventFormSchema } from "@/schemas";
+import { EventInfoData, NewEventFormSchema } from "@/schemas";
 import moment from "moment";
 import Image from "next/image";
 import { createPortal } from "react-dom";
@@ -43,22 +43,31 @@ import { FormButton } from "./common/form-button";
 import { ImageWrapper } from "./common/image-wrapper";
 import ModalTable from "./common/ModalTable";
 
-export function EventDataTable() {
+type NewEventFormValues = z.infer<typeof NewEventFormSchema>;
+
+export function EventDataTable({ eventQueryData }: any) {
+  const { toast } = useToast();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const q = searchParams.get("q") ? searchParams.get("q") : "";
   const [imageFiles, setImageFiles] = useState<File[]>([]);
-  const [dataList, setDataList] = useState<EventData[]>([]);
-  const [filteredData, setFilteredData] = useState<EventData[]>([]);
+  const [dataList, setDataList] = useState<EventInfoData[]>([]);
+  const [filteredData, setFilteredData] = useState<EventInfoData[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [search, setSearch] = useState<string>("");
+  const [singleDataImage, setSingleDataImage] = useState<string>("");
   const [isAddingEvent, setIsAddingEvent] = useState<boolean>(false);
   const [isEditingEvent, setIsEditingEvent] = useState<boolean>(false);
-
+  const { locale } = useParams();
   const [report, setReport] = useState<any>([]);
   const [error, setError] = useState<string | undefined>("");
   const [success, setSuccess] = useState<string | undefined>("");
   const [isPending, startTransition] = useTransition();
+  const [singleId, setSingleId] = useState<number>(0);
+  const [eventId, setEventId] = useState<string>("");
+  const [dateAdded, setDateAdded] = useState<string>("");
+  const [infoStatus, setInfoStatus] = useState<number>(0);
+  const [addedBy, setAddedBy] = useState<string>("");
   const { startUpload } = useUploadThing("imageUploader");
   const startDateTimeLocalNow = new Date();
   // new Date().getTime() - new Date().getTimezoneOffset() * 60_000
@@ -66,74 +75,227 @@ export function EventDataTable() {
   // new Date().getTime() - new Date().getTimezoneOffset() * 60_000
   // .toISOString().slice(0, 16);
 
-  const form = useForm<z.infer<typeof EventFormSchema>>({
-    resolver: zodResolver(EventFormSchema),
+  const form = useForm<NewEventFormValues>({
     defaultValues: {
-      title: "",
-      information: "",
-      eventLocation: "",
-      image: "",
+      eventDate: new Date(),
+      eventTitle: "",
       eventStartTime: startDateTimeLocalNow,
       eventEndTime: endDateTimeLocalNow,
-      eventDate: new Date(),
-      hashTags: [{ hash: "" }],
-      isEventDay: false,
+      eventDescription: "",
+      eventLocation: "",
+      eventCoverImage: "",
+      eventHashTag: [""],
+      // isEventDay: false,
+    },
+    resolver: zodResolver(NewEventFormSchema),
+  });
+
+  const eventHashTagsArray = useFieldArray({
+    control: form.control,
+    // @ts-ignore
+    name: "eventHashTag",
+    rules: {
+      required: "Please append at least 1 hash tag",
     },
   });
 
-  const control = form.control;
-
-  const eventHashTagsArray = useFieldArray({
-    name: "hashTags",
-    control,
-    //  rules: {
-    //    required: "Please append at least 1 Job Specification",
-    //  },
-  });
-
-  const onSubmit = (values: z.infer<typeof EventFormSchema>) => {
+  const onSubmit = (values: z.infer<typeof NewEventFormSchema>) => {
     setError("");
     setSuccess("");
 
     startTransition(async () => {
-      let uploadedCoverImageUrl = values.image;
+      if (isAddingEvent) {
+        // console.log(
+        //   "Form data values===============================, ",
+        //   values
+        // );
+        // console.log("Formatted Date==========================, ", moment(values.eventDate).format("YYYY-MM-DD"))
+        // console.log("Formatted Time==========================, ", moment(values.eventStartTime).format("HH:mm:ss"))
+        if (imageFiles.length > 0) {
+          const uploadedImages = await startUpload(imageFiles);
 
-      if (imageFiles.length > 0) {
-        const uploadedImages = await startUpload(imageFiles);
+          if (!uploadedImages) {
+            return;
+          }
+          // console.log("Image file url================, ", uploadedImages[0]);
 
-        if (!uploadedImages) {
-          return;
+          const uploadedCoverImageUrl = uploadedImages[0].url;
+          const data = {
+            eventDate: moment(values.eventDate).format("YYYY-MM-DD"),
+            eventTitle: values.eventTitle,
+            eventStartTime: moment(values.eventStartTime).format("HH:mm:ss"),
+            eventEndTime: moment(values.eventEndTime).format("HH:mm:ss"),
+            eventDescription: values.eventDescription,
+            eventLocation: values.eventLocation,
+            eventCoverImage: uploadedCoverImageUrl,
+            eventHashTag: values.eventHashTag,
+          };
+          addevent(data, locale)
+            .then((data) => {
+              // console.log(data);
+              if (data?.error) {
+                form.reset();
+                // setError(data.error);
+                toast({
+                  title: "Error",
+                  description: data.error,
+                  variant: "destructive",
+                });
+                handleCloseButtonClickAddEdit();
+              }
+              if (data?.success) {
+                form.reset();
+                // setSuccess(data.success);
+                toast({
+                  title: "Success",
+                  description: data.success,
+                  variant: "default",
+                });
+                setFilteredData(data.data);
+                handleCloseButtonClickAddEdit();
+              }
+            })
+            .catch(() => setError("Something went wrong"));
         }
-        console.log("Image file url================, ", uploadedImages[0]);
-
-        uploadedCoverImageUrl = uploadedImages[0].url;
       }
-      // login(values, locale, callbackUrl)
-      //   .then((data) => {
-      //     if (data?.error) {
-      //       form.reset();
-      //       setError(data.error);
-      //     }
+      if (isEditingEvent) {
+        const id = singleId;
+        const event_id = eventId;
+        const date_added = dateAdded;
+        const status = infoStatus;
+        const added_by_id = addedBy;
 
-      //     if (data?.success) {
-      //       form.reset();
-      //       setSuccess(data.success);
-      //     }
+        if (singleDataImage && singleDataImage === values.eventCoverImage) {
+          const data = {
+            eventDate: moment(values.eventDate).format("YYYY-MM-DD"),
+            eventTitle: values.eventTitle,
+            eventStartTime: moment(values.eventStartTime).format("HH:mm:ss"),
+            eventEndTime: moment(values.eventEndTime).format("HH:mm:ss"),
+            eventDescription: values.eventDescription,
+            eventLocation: values.eventLocation,
+            eventCoverImage: values.eventCoverImage,
+            eventHashTag: values.eventHashTag,
+          };
 
-      //     if (data?.twoFactor) {
-      //       setShowTwoFactor(true);
-      //     }
-      //   })
-      //   .catch(() => setError("Something went wrong"));
+          updateevent(
+            data,
+            locale,
+            id,
+            event_id,
+            date_added,
+            status,
+            added_by_id
+          )
+            .then(async (data) => {
+              // console.log(data);
+              if (data?.error) {
+                form.reset();
+                // setError(data.error);
+                toast({
+                  title: "Error",
+                  description: data.error,
+                  variant: "destructive",
+                });
+                handleCloseButtonClickAddEdit();
+              }
+              if (data?.success) {
+                form.reset();
+                // setSuccess(data.success);
+                toast({
+                  title: "Success",
+                  description: data.success,
+                  variant: "default",
+                });
+                setFilteredData(data.data);
+                handleCloseButtonClickAddEdit();
+              }
+            })
+            .catch(() => setError("Something went wrong"));
+        } else {
+          if (imageFiles.length > 0) {
+            const uploadedImages = await startUpload(imageFiles);
+
+            if (!uploadedImages) {
+              return;
+            }
+            // console.log("Image file url================, ", uploadedImages[0]);
+
+            const uploadedCoverImageUrl = uploadedImages[0].url;
+            const data = {
+              eventDate: moment(values.eventDate).format("YYYY-MM-DD"),
+              eventTitle: values.eventTitle,
+              eventStartTime: moment(values.eventStartTime).format("HH:mm:ss"),
+              eventEndTime: moment(values.eventEndTime).format("HH:mm:ss"),
+              eventDescription: values.eventDescription,
+              eventLocation: values.eventLocation,
+              eventCoverImage: uploadedCoverImageUrl,
+              eventHashTag: values.eventHashTag,
+            };
+            updateevent(
+              data,
+              locale,
+              id,
+              event_id,
+              date_added,
+              status,
+              added_by_id
+            )
+              .then(async (data) => {
+                // console.log(data);
+                if (data?.error) {
+                  form.reset();
+                  // setError(data.error);
+                  toast({
+                    title: "Error",
+                    description: data.error,
+                    variant: "destructive",
+                  });
+                  handleCloseButtonClickAddEdit();
+                }
+                if (data?.success) {
+                  form.reset();
+                  // setSuccess(data.success);
+                  toast({
+                    title: "Success",
+                    description: data.success,
+                    variant: "default",
+                  });
+                  setFilteredData(data.data);
+                  handleCloseButtonClickAddEdit();
+                }
+              })
+              .catch(() => setError("Something went wrong"));
+          }
+        }
+      }
     });
   };
 
   useEffect(() => {
     setIsLoading(true);
     const getData = async () => {
-      const data = await eventsList();
-      setDataList(data);
-      setIsLoading(false);
+      // const data = await getevents();
+      if (eventQueryData) {
+        if (eventQueryData?.success) {
+          setDataList(eventQueryData?.data);
+          setIsLoading(false);
+        } else if (eventQueryData?.error) {
+          setDataList([]);
+          setIsLoading(false);
+          // setError(eventQueryData?.error);
+          toast({
+            title: "Error",
+            description: eventQueryData.error,
+            variant: "destructive",
+          });
+        } else {
+          setDataList([]);
+          setIsLoading(false);
+        }
+      } else {
+        setDataList([]);
+        setIsLoading(false);
+      }
     };
     getData();
   }, []);
@@ -142,18 +304,18 @@ export function EventDataTable() {
     const getData = async () => {
       setFilteredData(dataList);
 
-      const rep: any = dataList?.map((dat: EventData) => {
+      const rep: any = dataList?.map((dat: EventInfoData) => {
         return {
-          ID: dat.key,
-          Title: dat.title,
-          Information: dat.information,
-          Image: dat.image,
+          ID: dat.id,
+          Title: dat.eventTitle,
+          "Event Details": dat.eventDescription,
+          Image: dat.eventCoverImage,
           "Event Start": dat.eventStartTime,
           "Event End": dat.eventEndTime,
           "Event Date": dat.eventDate,
           Location: dat.eventLocation,
-          "Published Date": dat.publishDate,
-          Hashtag: JSON.stringify(dat.hashTags),
+          "Published Date": dat.date_added,
+          Hashtag: JSON.stringify(dat.eventHashTag),
         };
       });
       setReport(rep);
@@ -164,13 +326,13 @@ export function EventDataTable() {
   useEffect(() => {
     let result = dataList;
     if (q && q.length > 3) {
-      result = dataList.filter((data: any) => {
+      result = dataList.filter((data: EventInfoData) => {
         return (
-          data?.title.toLowerCase().includes(q.toLowerCase()) ||
-          data?.information.toLowerCase().includes(q.toLowerCase()) ||
+          data?.eventTitle.toLowerCase().includes(q.toLowerCase()) ||
+          data?.eventDescription.toLowerCase().includes(q.toLowerCase()) ||
           data?.eventStartTime.toLowerCase().includes(q.toLowerCase()) ||
           data?.eventEndTime.toLowerCase().includes(q.toLowerCase()) ||
-          data?.publishDate.toString().includes(q.toString()) ||
+          data?.date_added.toString().includes(q.toString()) ||
           data?.eventDate.toString().includes(q.toString()) ||
           data?.eventLocation.toLowerCase().includes(q.toLowerCase())
         );
@@ -222,289 +384,288 @@ export function EventDataTable() {
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className="space-y-6 w-[260px] xs:w-[300px] sm:w-[340px]"
+            className="space-y-6 w-[260px] xs:w-[300px] sm:w-[340px] md:w-[500px] "
           >
             <div className="space-y-4">
-              <>
-                <FormField
-                  control={form.control}
-                  name="title"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Event Title</FormLabel>
-                      <FormControl>
-                        <Input
-                          {...field}
-                          disabled={isPending}
-                          placeholder="Enter envent title"
-                          className={` bg-[var(--clr-silver-v6)] ${
-                            form.formState.errors.title
-                              ? "border border-red-500 focus-visible:ring-0"
-                              : "focus-visible:ring-transparent border-none"
-                          }`}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="information"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Scholarship Information</FormLabel>
-                      <FormControl>
-                        <Textarea
-                          {...field}
-                          disabled={isPending}
-                          placeholder="Type Additional Notes Here."
-                          className={`rounded-[6px]  !min-h-[100px] !max-h-[10vh] bg-[var(--clr-silver-v6)] placeholder:text-left ${
-                            form.formState.errors.information
-                              ? "border border-red-500 focus-visible:ring-0"
-                              : "focus-visible:ring-transparent border-none"
-                          }`}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+              <FormField
+                control={form.control}
+                name="eventTitle"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Event Title</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        disabled={isPending}
+                        placeholder="Enter event title"
+                        className={` bg-[var(--clr-silver-v6)] ${
+                          form.formState.errors.eventTitle
+                            ? "border border-red-500 focus-visible:ring-0"
+                            : "focus-visible:ring-transparent border-none"
+                        }`}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="eventDescription"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Event Details</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        {...field}
+                        disabled={isPending}
+                        placeholder="Type Event Details Here."
+                        className={`rounded-[6px]  !min-h-[100px] !max-h-[10vh] bg-[var(--clr-silver-v6)] placeholder:text-left ${
+                          form.formState.errors.eventDescription
+                            ? "border border-red-500 focus-visible:ring-0"
+                            : "focus-visible:ring-transparent border-none"
+                        }`}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-                <FormField
-                  control={form.control}
-                  name="eventDate"
-                  render={({ field }) => (
-                    <FormItem className="w-full">
-                      <FormLabel>Event Date:</FormLabel>
-                      <FormControl>
-                        <div
-                          className={` relative flex item-center gap-1 justify-center pl-2  text-[var(--clr-secondary)] h-[40px] w-full bg-[var(--clr-silver-v6)] rounded-[6px] shadow-none ${
-                            form.formState.errors.eventDate
-                              ? "border border-red-500 focus-visible:ring-0"
-                              : "focus-visible:ring-transparent border-none"
-                          }`}
-                        >
-                          <Image
-                            src="/assets/calendar.svg"
-                            alt="calendar"
-                            width={24}
-                            height={24}
-                            className="text-[var(--clr-secondary)]"
-                          />
-                          <DatePicker
-                            selected={field.value}
-                            onChange={(date: Date) => field.onChange(date)}
-                            // showTimeSelect
-                            // timeInputLabel="Time:"
-                            dateFormat="MM/dd/yyyy"
-                            wrapperClassName="w-full flex flex-1 h-full !py-2"
-                          />
-                        </div>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="eventStartTime"
-                  render={({ field }) => (
-                    <FormItem className="w-full">
-                      <FormLabel>Start Time:</FormLabel>
-                      <FormControl>
-                        <div
-                          className={` relative flex item-center gap-1 justify-center pl-2  text-[var(--clr-secondary)] h-[40px] w-full bg-[var(--clr-silver-v6)] rounded-[6px] shadow-none ${
-                            form.formState.errors.eventStartTime
-                              ? "border border-red-500 focus-visible:ring-0"
-                              : "focus-visible:ring-transparent border-none"
-                          }`}
-                        >
-                          <Image
-                            src="/assets/clock.svg"
-                            alt="calendar"
-                            width={24}
-                            height={24}
-                            className="filter-grey"
-                          />
-                          <DatePicker
-                            selected={field.value}
-                            onChange={(date: Date) => field.onChange(date)}
-                            showTimeSelect
-                            timeInputLabel="Time:"
-                            dateFormat="MM/dd/yyyy h:mm aa"
-                            wrapperClassName="w-full flex flex-1 h-full !py-2"
-                          />
-                        </div>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="eventEndTime"
-                  render={({ field }) => (
-                    <FormItem className="w-full">
-                      <FormLabel>End Time:</FormLabel>
-                      <FormControl>
-                        <div
-                          className={` relative flex item-center gap-1 justify-center pl-2  text-[var(--clr-secondary)] h-[40px] w-full bg-[var(--clr-silver-v6)] rounded-[6px] shadow-none ${
-                            form.formState.errors.eventEndTime
-                              ? "border border-red-500 focus-visible:ring-0"
-                              : "focus-visible:ring-transparent border-none"
-                          }`}
-                        >
-                          <Image
-                            src="/assets/clock.svg"
-                            alt="calendar"
-                            width={24}
-                            height={24}
-                            className="filter-grey"
-                          />
-
-                          <DatePicker
-                            selected={field.value}
-                            onChange={(date: Date) => field.onChange(date)}
-                            showTimeSelect
-                            timeInputLabel="Time:"
-                            dateFormat="MM/dd/yyyy h:mm aa"
-                            wrapperClassName="w-full flex flex-1 h-full !py-2 "
-                          />
-                        </div>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="eventLocation"
-                  render={({ field }) => (
-                    <FormItem className="w-full">
-                      <FormLabel>Event Location</FormLabel>
-                      <FormControl>
-                        <div
-                          className={` relative flex item-center gap-1 justify-center pl-2 text-[var(--clr-secondary)] h-[40px] w-full bg-[var(--clr-silver-v6)] rounded-[6px] shadow-none ${
-                            form.formState.errors.eventLocation
-                              ? "border border-red-500 focus-visible:ring-0"
-                              : "focus-visible:ring-transparent border-none"
-                          }`}
-                        >
-                          <Image
-                            src="/assets/location-grey.svg"
-                            alt="calendar"
-                            width={24}
-                            height={24}
-                            className="filter-grey"
-                          />
-                          <Input
-                            placeholder="Event location or Online"
-                            disabled={isPending}
-                            {...field}
-                            className="flex flex-1 h-full py-3 outline-none focus-visible:ring-transparent border-none"
-                          />
-                        </div>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="image"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Upload Cover Image</FormLabel>
-                      <FormControl>
-                        <ImageUploader
-                          onFieldChange={field.onChange}
-                          imageUrl={field.value}
-                          setFiles={setImageFiles}
-                          isError={form.formState.errors.image ? true : false}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <div>
-                  <p className="text-[0.9rem] font-medium mb-2">Hashtags</p>
-                  <div className=" space-y-2">
-                    {eventHashTagsArray.fields.map((field, index) => {
-                      const errorForField =
-                        form.formState.errors?.hashTags?.[index]?.hash;
-                      return (
-                        <div key={field.hash} className="w-full flex flex-col">
-                          <div className="flex flex-row items-end gap-2">
-                            <div className="flex-1 !h-[38px] ">
-                              <input
-                                {...form.register(
-                                  `hashTags.${index}.hash` as const
-                                )}
-                                placeholder="eg. bible"
-                                defaultValue={field.hash}
-                                className={`flex rounded-md border border-input px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 h-full w-full bg-[var(--clr-silver-v6)] ${
-                                  errorForField
-                                    ? "border border-red-500 focus-visible:ring-0"
-                                    : "focus-visible:ring-transparent border-none"
-                                }`}
-                              />
-                            </div>
-
-                            <ToolTip tooltip="Remove">
-                              <Button
-                                size={"icon"}
-                                variant={"ghost"}
-                                asChild
-                                className="  w-5 h-5 shadow-lg  mb-1 flex items-center justify-center"
-                              >
-                                <FaTrashAlt
-                                  onClick={() =>
-                                    eventHashTagsArray.remove(index)
-                                  }
-                                  className="text-sm text-[var(--clr-scarlet)]"
-                                />
-                              </Button>
-                            </ToolTip>
-                          </div>
-                          {errorForField?.message && (
-                            <p>{errorForField?.message ?? <>&nbsp;</>}</p>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
-
-                  <p>{form.formState.errors.hashTags?.message}</p>
-                  <div className="flex w-full justify-end mt-3 pr-7">
-                    <Button
-                      // size={""}
-                      size={"sm"}
-                      variant={"outline"}
-                      asChild
-                      className="shadow-none  flex items-center justify-center rounded-[4px] border-[var(--clr-secondary)]"
-                    >
-                      <p
-                        className="gap-2"
-                        onClick={() => {
-                          eventHashTagsArray.append({ hash: "" });
-                          form.trigger("hashTags");
-                        }}
+              <FormField
+                control={form.control}
+                name="eventDate"
+                render={({ field }) => (
+                  <FormItem className="w-full">
+                    <FormLabel>Event Date:</FormLabel>
+                    <FormControl>
+                      <div
+                        className={` relative flex item-center gap-1 justify-center pl-2  text-[var(--clr-secondary)] h-[40px] w-full bg-[var(--clr-silver-v6)] rounded-[6px] shadow-none ${
+                          form.formState.errors.eventDate
+                            ? "border border-red-500 focus-visible:ring-0"
+                            : "focus-visible:ring-transparent border-none"
+                        }`}
                       >
-                        <HiOutlinePlus className="text-lg text-[var(--clr-secondary)]" />
-                        <span>Add New Hashtag</span>
-                      </p>
-                    </Button>
-                  </div>
+                        <Image
+                          src="/assets/calendar.svg"
+                          alt="calendar"
+                          width={24}
+                          height={24}
+                          className="text-[var(--clr-secondary)]"
+                        />
+                        <DatePicker
+                          selected={field.value}
+                          onChange={(date: Date) => field.onChange(date)}
+                          // showTimeSelect
+                          // timeInputLabel="Time:"
+                          dateFormat="MM/dd/yyyy"
+                          wrapperClassName="w-full flex flex-1 h-full !py-2"
+                        />
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="eventStartTime"
+                render={({ field }) => (
+                  <FormItem className="w-full">
+                    <FormLabel>Start Time:</FormLabel>
+                    <FormControl>
+                      <div
+                        className={` relative flex item-center gap-1 justify-center pl-2  text-[var(--clr-secondary)] h-[40px] w-full bg-[var(--clr-silver-v6)] rounded-[6px] shadow-none ${
+                          form.formState.errors.eventStartTime
+                            ? "border border-red-500 focus-visible:ring-0"
+                            : "focus-visible:ring-transparent border-none"
+                        }`}
+                      >
+                        <Image
+                          src="/assets/clock.svg"
+                          alt="calendar"
+                          width={24}
+                          height={24}
+                          className="filter-grey"
+                        />
+                        <DatePicker
+                          selected={field.value}
+                          onChange={(date: Date) => field.onChange(date)}
+                          showTimeSelect
+                          timeInputLabel="Time:"
+                          dateFormat="h:mm aa"
+                          wrapperClassName="w-full flex flex-1 h-full !py-2"
+                        />
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="eventEndTime"
+                render={({ field }) => (
+                  <FormItem className="w-full">
+                    <FormLabel>End Time:</FormLabel>
+                    <FormControl>
+                      <div
+                        className={` relative flex item-center gap-1 justify-center pl-2  text-[var(--clr-secondary)] h-[40px] w-full bg-[var(--clr-silver-v6)] rounded-[6px] shadow-none ${
+                          form.formState.errors.eventEndTime
+                            ? "border border-red-500 focus-visible:ring-0"
+                            : "focus-visible:ring-transparent border-none"
+                        }`}
+                      >
+                        <Image
+                          src="/assets/clock.svg"
+                          alt="calendar"
+                          width={24}
+                          height={24}
+                          className="filter-grey"
+                        />
+
+                        <DatePicker
+                          selected={field.value}
+                          onChange={(date: Date) => field.onChange(date)}
+                          showTimeSelect
+                          timeInputLabel="Time:"
+                          dateFormat="h:mm aa"
+                          wrapperClassName="w-full flex flex-1 h-full !py-2 "
+                        />
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="eventLocation"
+                render={({ field }) => (
+                  <FormItem className="w-full">
+                    <FormLabel>Event Location</FormLabel>
+                    <FormControl>
+                      <div
+                        className={` relative flex item-center gap-1 justify-center pl-2 text-[var(--clr-secondary)] h-[40px] w-full bg-[var(--clr-silver-v6)] rounded-[6px] shadow-none ${
+                          form.formState.errors.eventLocation
+                            ? "border border-red-500 focus-visible:ring-0"
+                            : "focus-visible:ring-transparent border-none"
+                        }`}
+                      >
+                        <Image
+                          src="/assets/location-grey.svg"
+                          alt="calendar"
+                          width={24}
+                          height={24}
+                          className="filter-grey"
+                        />
+                        <Input
+                          placeholder="Event location or Online"
+                          disabled={isPending}
+                          {...field}
+                          className="flex flex-1 h-full py-3 outline-none focus-visible:ring-transparent border-none"
+                        />
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="eventCoverImage"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Event Cover Image</FormLabel>
+                    <FormControl>
+                      <ImageUploader
+                        onFieldChange={field.onChange}
+                        imageUrl={field.value}
+                        setFiles={setImageFiles}
+                        isError={
+                          form.formState.errors.eventCoverImage ? true : false
+                        }
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <div>
+                <p className="text-[0.9rem] font-medium mb-2">Hash Tags</p>
+                <div className=" space-y-2">
+                  {eventHashTagsArray.fields.map((field, index) => {
+                    const errorForField =
+                      form.formState.errors?.eventHashTag?.[index];
+                    return (
+                      <div key={field.id} className="w-full flex flex-col">
+                        <div className="flex flex-row items-end gap-2">
+                          <div className="flex-1 !h-[38px] ">
+                            <input
+                              {...form.register(
+                                `eventHashTag.${index}` as const
+                              )}
+                              placeholder="eg. #bible"
+                              defaultValue={field.id}
+                              className={`flex rounded-md border border-input px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 h-full w-full bg-[var(--clr-silver-v6)] ${
+                                errorForField
+                                  ? "border border-red-500 focus-visible:ring-0"
+                                  : "focus-visible:ring-transparent border-none"
+                              }`}
+                            />
+                          </div>
+
+                          <ToolTip tooltip="Remove">
+                            <Button
+                              size={"icon"}
+                              variant={"ghost"}
+                              asChild
+                              className="  w-5 h-5 shadow-lg  mb-1 flex items-center justify-center"
+                            >
+                              <FaTrashAlt
+                                onClick={() => eventHashTagsArray.remove(index)}
+                                className="text-sm text-[var(--clr-scarlet)]"
+                              />
+                            </Button>
+                          </ToolTip>
+                        </div>
+                        {errorForField?.message && (
+                          <p>{errorForField?.message ?? <>&nbsp;</>}</p>
+                        )}
+                      </div>
+                    );
+                  })}
                 </div>
 
-                <FormField
+                <p>{form.formState.errors.eventHashTag?.message}</p>
+                <div className="flex w-full justify-end mt-3 pr-7">
+                  <Button
+                    // size={""}
+                    size={"sm"}
+                    variant={"outline"}
+                    asChild
+                    className="shadow-none  flex items-center justify-center rounded-[4px] border-[var(--clr-secondary)]"
+                  >
+                    <p
+                      className="gap-2"
+                      onClick={() => {
+                        eventHashTagsArray.append("");
+                        form.trigger("eventHashTag");
+                      }}
+                    >
+                      <HiOutlinePlus className="text-lg text-[var(--clr-secondary)]" />
+                      <span>Add New Hashtag</span>
+                    </p>
+                  </Button>
+                </div>
+              </div>
+
+              {/* <FormField
                   control={form.control}
                   name="isEventDay"
                   render={({ field }) => (
@@ -528,8 +689,7 @@ export function EventDataTable() {
                       <FormMessage />
                     </FormItem>
                   )}
-                />
-              </>
+                /> */}
             </div>
             <div className="!mb-4 !mt-6 !pt-4">
               <Button
@@ -546,15 +706,19 @@ export function EventDataTable() {
     );
   };
 
-  const HandleImagePreview = ({ singleData }: { singleData?: EventData }) => {
+  const HandleImagePreview = ({
+    singleData,
+  }: {
+    singleData?: EventInfoData;
+  }) => {
     return (
       <ImageWrapper
       // subHeaderLabel="Welcome back"
       >
         <div className="relative w-[260px] xs:w-[300px] sm:w-[340px] h-[260px] xs:h-[300px] sm:h-[340px] flex items-center justify-center !rounded-xl">
-          {singleData?.image ? (
+          {singleData?.eventCoverImage ? (
             <Image
-              src={singleData?.image}
+              src={singleData?.eventCoverImage}
               alt="-"
               fill
               className="object-cover object-center !rounded-xl"
@@ -562,7 +726,7 @@ export function EventDataTable() {
           ) : (
             <div className="bg-[var(--clr-secondary)] text-[var(--clr-primary)] flex items-center justify-center w-full h-full">
               <h1 className="text-4xl font-bold">
-                {singleData?.title?.split("")?.shift()?.toUpperCase()}
+                {singleData?.eventTitle?.split("")?.shift()?.toUpperCase()}
               </h1>
             </div>
           )}
@@ -571,7 +735,7 @@ export function EventDataTable() {
     );
   };
 
-  const columns: TableColumn<EventData>[] = useMemo(
+  const columns: TableColumn<EventInfoData>[] = useMemo(
     () => [
       {
         name: "ID",
@@ -588,9 +752,9 @@ export function EventDataTable() {
           >
             <div className="cursor-pointer">
               <Avatar className="w-[45px] h-[45px] relative">
-                <AvatarImage src={row?.image || ""} />
+                <AvatarImage src={row?.eventCoverImage || ""} />
                 <AvatarFallback className="bg-[var(--clr-secondary)] text-[var(--clr-primary)]">
-                  {row?.title?.split("")?.shift()?.toUpperCase()}
+                  {row?.eventTitle?.split("")?.shift()?.toUpperCase()}
                 </AvatarFallback>
               </Avatar>
             </div>
@@ -600,41 +764,52 @@ export function EventDataTable() {
       {
         name: "Title",
         minWidth: "300px",
-        cell: (row: any) => row?.title,
+        cell: (row: any) => row?.eventTitle,
       },
       {
-        name: "Information",
+        name: "Event Details",
         minWidth: "450px",
-        cell: (row: any) => row?.information,
+        cell: (row: any) => row?.eventDescription,
       },
       {
         name: "Event Date",
         width: "200px",
         cell: (row: any) => moment(new Date(row?.eventDate)).format("LL"),
       },
-
+      {
+        name: "Published Date",
+        width: "200px",
+        cell: (row: any) => moment(new Date(row?.date_added)).format("LL"),
+      },
       {
         name: "Start Time",
         minWidth: "200px",
-        cell: (row: any) => moment(new Date(row?.eventStartTime)).format("LT"),
+        // cell: (row: any) => moment(new Date(row?.eventStartTime)).format("LT"),
+        cell: (row: any) => row?.eventStartTime,
       },
       {
         name: "End Time",
         minWidth: "200px",
-        cell: (row: any) => moment(new Date(row?.eventEndTime)).format("LT"),
+        // cell: (row: any) => moment(new Date(row?.eventEndTime)).format("LT"),
+        cell: (row: any) => row?.eventEndTime,
       },
       {
         name: "Event Location",
         minWidth: "200px",
         cell: (row: any) => row?.eventLocation,
       },
+      // {
+      //   name: "Total Bookings",
+      //   minWidth: "200px",
+      //   cell: (row: any) => row?.bookings?.length(),
+      // },
       {
         name: "Action",
         width: "140px",
         cell: (row) => (
           <div className="flex justify-center items-center">
-            <div onClick={() => editEvent(row)} className="flex gap-6">
-              <ToolTip tooltip="Edit Scholarship">
+            <div onClick={() => editEvent(row)}>
+              <ToolTip tooltip="Edit Event">
                 {/* <FormButton
                   asChild
                   Form={() => HandleForm({ type: "EDIT", singleData: row })}
@@ -655,6 +830,17 @@ export function EventDataTable() {
     []
   );
 
+  const handleCloseButtonClickAddEdit = () => {
+    setIsAddingEvent(false);
+    setIsEditingEvent(false);
+    setSingleId(0);
+    setEventId("");
+    setDateAdded("");
+    setInfoStatus(0);
+    setAddedBy("");
+    setSingleDataImage("");
+  };
+
   const handleCloseButtonClick = () => {
     // console.log("Close button Clicked");
     setIsAddingEvent(false);
@@ -662,23 +848,45 @@ export function EventDataTable() {
   };
 
   const addEvent = () => {
-    // form.setValue("title", "");
-    // form.setValue("information", "");
-    // form.setValue("image", "");
     form.reset();
+
     setIsAddingEvent(true);
   };
 
-  const editEvent = (event: EventData) => {
-    form.setValue("hashTags", [...event?.hashTags]);
-    form.setValue("title", event?.title);
-    form.setValue("information", event?.information);
-    form.setValue("image", event?.image);
+  const editEvent = (event: EventInfoData) => {
+    const date = new Date(event?.eventDate); // Event date
+    const startTimeArray = event?.eventStartTime.split(":").map(Number);
+    const endTimeArray = event?.eventEndTime.split(":").map(Number);
+
+    const startt = date.setHours(
+      startTimeArray[0],
+      startTimeArray[1],
+      startTimeArray[2],
+      0
+    );
+    const endt = date.setHours(
+      endTimeArray[0],
+      endTimeArray[1],
+      endTimeArray[2],
+      0
+    );
+
+    form.setValue("eventHashTag", [...event?.eventHashTag]);
     form.setValue("eventDate", new Date(event?.eventDate));
-    form.setValue("eventStartTime", new Date(event?.eventDate));
-    form.setValue("eventEndTime", new Date(event?.eventDate));
+    form.setValue("eventStartTime", new Date(startt));
+    form.setValue("eventEndTime", new Date(endt));
+    form.setValue("eventTitle", event?.eventTitle);
+    form.setValue("eventDescription", event?.eventDescription);
     form.setValue("eventLocation", event?.eventLocation);
-    form.setValue("isEventDay", event?.isEventDay);
+    form.setValue("eventCoverImage", event?.eventCoverImage);
+    // form.setValue("isEventDay", event?.isEventDay);
+
+    setSingleId(event?.id);
+    setEventId(event?.event_id);
+    setDateAdded(event?.date_added);
+    setInfoStatus(event?.status);
+    setAddedBy(event?.added_by_id);
+    setSingleDataImage(event?.eventCoverImage);
 
     setIsEditingEvent(true);
   };
@@ -717,8 +925,8 @@ export function EventDataTable() {
             search={search}
             setSearch={setSearch}
             report={report}
-            reportFilename="Payments"
-            addButtonTitle="Add Payment"
+            reportFilename="Events"
+            addButtonTitle="Add Event"
             isAdd={true}
             addModal={addEvent}
           />
