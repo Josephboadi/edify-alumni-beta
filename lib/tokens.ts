@@ -152,8 +152,8 @@ export const deleteSessionToken = async () => {
           id: existingToken.id,
         },
       });
-      await signOut();
-      window.location.reload();
     }
+    await signOut();
+    window.location.reload();
   }
 };

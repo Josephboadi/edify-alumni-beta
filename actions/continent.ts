@@ -197,7 +197,7 @@ export const getcontinent = async () => {
     };
   } else if (result?.data?.status == 10) {
     await deleteSessionToken();
-    return { error: result?.data?.message };
+    // return { error: result?.data?.message };
   } else {
     return { error: "Error getting data" };
   }
