@@ -175,7 +175,9 @@ export const getcontinent = async () => {
       const allowedOrigins = [apiUrl];
       if (allowedOrigins.includes(origin)) {
         config.headers.tokenID = `${existingToken?.token}`;
+        config.headers["Content-Type"] = "application/json";
       }
+      // console.log("Config data===============================, ", config);
       return config;
     },
     (error) => {
@@ -197,7 +199,7 @@ export const getcontinent = async () => {
     };
   } else if (result?.data?.status == 10) {
     await deleteSessionToken();
-    // return { error: result?.data?.message };
+    return { error: result?.data?.message };
   } else {
     return { error: "Error getting data" };
   }

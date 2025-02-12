@@ -190,6 +190,7 @@ export const getdiscussionmessages = async (discussion_id: string) => {
       const allowedOrigins = [apiUrl];
       if (allowedOrigins.includes(origin)) {
         config.headers.tokenID = `${existingToken?.token}`;
+        config.headers["Content-Type"] = "application/json";
       }
       return config;
     },

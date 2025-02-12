@@ -105,7 +105,6 @@ export const login = async (
       // redirectTo: callbackUrl || redirectUrl,
       redirectTo: redirectUrl,
     });
-   
   } catch (error) {
     if (error instanceof AuthError) {
       switch (error.type) {

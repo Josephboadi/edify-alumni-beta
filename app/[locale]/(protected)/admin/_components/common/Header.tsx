@@ -5,7 +5,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { notificationsData } from "@/data/notifications";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { ExitIcon } from "@radix-ui/react-icons";
-import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useParams, usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -32,11 +31,11 @@ import {
 import { useAppStore } from "@/store/store";
 import { AiOutlineMenu } from "react-icons/ai";
 
-const Header = () => {
+const Header = ({ session }: any) => {
   const { t } = useTranslation();
   const { locale } = useParams();
   const pathname = usePathname();
-  const session = useSession();
+  // const session = useSession();
   const router = useRouter();
   const [scrolled, setScrolled] = useState(false);
   const [isContextMenuVisible, setIsContextMenuVisible] = useState(false);
@@ -101,7 +100,7 @@ const Header = () => {
             />
           </div>
           <div className="flex items-center ">
-            {session?.status === "authenticated" && (
+            {session && (
               <>
                 <LanguageButton asChild mode="modal">
                   <div className=" h-[38px]   rounded-full p-2 px-2 flex items-center justify-center  bg-[var(--clr-silver)] bg-clip-padding backdrop-filter backdrop-blur-3xl bg-opacity-100 shadow-sm hover:shadow-md transition-all duration-300 hover:scale-105 cursor-pointer mr-1">
@@ -179,61 +178,57 @@ const Header = () => {
                   className=" h-[40px] min-w-[70px]   rounded-full p-4 px-2 flex items-center justify-center bg-[var(--clr-silver)] bg-clip-padding backdrop-filter backdrop-blur-3xl bg-opacity-100 shadow-sm hover:shadow-md transition-all duration-300 hover:scale-105 cursor-pointer"
                   // onClick={() => setIsContextMenuVisible(true)}
                 >
-                  {session?.status === "authenticated" ? (
-                    <>
-                      <div className="">
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <div className="flex items-center gap-2">
-                              <Avatar className="w-[30px] h-[30px] relative">
-                                {/* <Suspense
+                  {session ? (
+                    <div className="">
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <div className="flex items-center gap-2">
+                            <Avatar className="w-[30px] h-[30px] relative">
+                              {/* <Suspense
                               fallback={<FaSpinner className="animate-spin" />}
                             > */}
-                                <AvatarImage
-                                  src={session?.data?.user?.image || ""}
-                                />
-                                {/* </Suspense> */}
-                                <AvatarFallback className="bg-[var(--clr-secondary)] text-[var(--clr-primary)]">
-                                  {session?.data?.user?.name
-                                    ?.split("")
-                                    ?.shift()
-                                    ?.toUpperCase()}
-                                </AvatarFallback>
-                              </Avatar>
-                              <RxHamburgerMenu />
-                            </div>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent className="rounded-[5px] w-56 py-1 px-0 block ">
-                            <DropdownMenuLabel className="px-5 flex flex-col items-start">
-                              <h1 className="text-md font-semibold text-[var(--clr-jet)]">
-                                {session?.data?.user?.name}
-                              </h1>
-                              <p className="text-xs text-[var(--clr-jet-v1)] font-normal">
-                                {session?.data?.user?.email}
-                              </p>
-                            </DropdownMenuLabel>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem
-                              asChild
-                              className={`px-5 py-2 ${
-                                newPath === selectedMenu && "bg-slate-100"
-                              } `}
-                              onClick={() => setSelectedMenu(newPath)}
-                            >
-                              <Link href={newPath}>Home</Link>
-                            </DropdownMenuItem>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem
-                              onClick={() => handleLogout()}
-                              className="px-4"
-                            >
-                              <ExitIcon className="mr-2 h-4 w-4" />
-                              <span>Log out</span>
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </div>
-                    </>
+                              <AvatarImage src={session?.user?.image || ""} />
+                              {/* </Suspense> */}
+                              <AvatarFallback className="bg-[var(--clr-secondary)] text-[var(--clr-primary)]">
+                                {session?.user?.name
+                                  ?.split("")
+                                  ?.shift()
+                                  ?.toUpperCase()}
+                              </AvatarFallback>
+                            </Avatar>
+                            <RxHamburgerMenu />
+                          </div>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent className="rounded-[5px] w-56 py-1 px-0 block ">
+                          <DropdownMenuLabel className="px-5 flex flex-col items-start">
+                            <h1 className="text-md font-semibold text-[var(--clr-jet)]">
+                              {session?.user?.name}
+                            </h1>
+                            <p className="text-xs text-[var(--clr-jet-v1)] font-normal">
+                              {session?.user?.email}
+                            </p>
+                          </DropdownMenuLabel>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem
+                            asChild
+                            className={`px-5 py-2 ${
+                              newPath === selectedMenu && "bg-slate-100"
+                            } `}
+                            onClick={() => setSelectedMenu(newPath)}
+                          >
+                            <Link href={newPath}>Home</Link>
+                          </DropdownMenuItem>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem
+                            onClick={() => handleLogout()}
+                            className="px-4"
+                          >
+                            <ExitIcon className="mr-2 h-4 w-4" />
+                            <span>Log out</span>
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
                   ) : (
                     <div className="flex items-center gap-2">
                       <Avatar className="w-[30px] h-[30px] relative">

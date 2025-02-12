@@ -13,10 +13,6 @@ export default auth(async (req) => {
   const fallbacklanguage = "/";
   const fallbacklanguage1 = "/de";
 
-  // if (req.auth) {
-  //   await generateSessionToken();
-  // }
-
   let locale = (await req.cookies.get("NEXT_LOCALE")?.value)?.toString();
 
   let language =
@@ -68,16 +64,16 @@ export default auth(async (req) => {
   const isAuthRoute = authRoutes.includes(nextUrl.pathname);
 
   const isApiAuthRoute = nextUrl.pathname.startsWith("/api/auth");
+  const isApiAuthRoute1 = nextUrl.pathname.startsWith(`${language}/api/auth`);
 
-  if (isApiAuthRoute) {
+  if (isApiAuthRoute || isApiAuthRoute1) {
     return i18nRouter(req, i18nConfig);
   }
 
   if (isAuthRoute) {
     if (isLoggedIn) {
-      return NextResponse.redirect(new URL("/", nextUrl));
+      return NextResponse.redirect(new URL(language, nextUrl));
       // return NextResponse.redirect(new URL(DEFAULT_LOGIN_REDIRECT, nextUrl));
-      // return i18nRouter(req, i18nConfig);
     }
     return i18nRouter(req, i18nConfig);
   }
@@ -93,8 +89,9 @@ export default auth(async (req) => {
     return NextResponse.redirect(
       new URL(
         // `${language}auth/login?callbackUrl=${encodedCallbackUrl}`,
-        // `${language}auth/login`,
-        `${language}`,
+        // `${language}auth/login?${encodedCallbackUrl}`,
+        `${language}auth/login`,
+        // `${language}`,
         nextUrl
       )
     );

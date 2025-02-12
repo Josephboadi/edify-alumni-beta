@@ -78,14 +78,6 @@ export const {
         session.user.token = token.jti as string;
       }
 
-      // if (token.sub && session.user) {
-      //   await generateSessionToken(
-      //     token.sub,
-      //     session.expires,
-      //     token.jti as string
-      //   );
-      // }
-
       return session;
     },
     async jwt({ token }) {
@@ -112,6 +104,6 @@ export const {
     },
   },
   adapter: PrismaAdapter(db),
-  session: { strategy: "jwt", maxAge: 20 * 60 },
+  session: { strategy: "jwt" },
   ...authConfig,
 });

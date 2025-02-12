@@ -26,7 +26,6 @@ import { LanguageButton } from "../common/Language-button";
 import Wrapper from "../common/Wrapper";
 import Logo from "../header/Logo";
 
-import { useCurrentAuth } from "@/hooks/use-current-auth";
 import { useAppStore } from "@/store/store";
 import { createPortal } from "react-dom";
 import { LoginForm } from "../auth/login-form";
@@ -41,8 +40,9 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 
-const Navbar = ({ locale }: any) => {
-  const session = useCurrentAuth();
+const Navbar = ({ locale, session }: any) => {
+  const [sessionData, setSessionData] = useState<any>();
+  // const session = useCurrentAuth();
   const { t } = useTranslation();
   const { formType, authModal, setAuthModal } = useAppStore();
   const pathname = usePathname();
@@ -60,7 +60,7 @@ const Navbar = ({ locale }: any) => {
     setAuthModal();
   };
 
-  // if (session?.status === "authenticated") {
+  // if (session) {
   //   router.refresh();
   // }
 
@@ -114,6 +114,10 @@ const Navbar = ({ locale }: any) => {
   // ];
 
   useEffect(() => {
+    setSessionData(session);
+  }, [session]);
+
+  useEffect(() => {
     document.addEventListener("scroll", () => {
       if (window.scrollY > 100) {
         setScrolled(true);
@@ -161,7 +165,7 @@ const Navbar = ({ locale }: any) => {
             {/* bg-[var(--clr-primary-light)] bg-clip-padding backdrop-filter
           backdrop-blur-sm bg-opacity-10 */}
             <div className="flex items-center ">
-              {session?.status === "authenticated" ? (
+              {sessionData ? (
                 <>
                   <LanguageButton asChild mode="modal">
                     <div className=" h-[38px]   rounded-full p-2 px-2 flex items-center justify-center  bg-[var(--clr-silver)] bg-clip-padding backdrop-filter backdrop-blur-3xl bg-opacity-100 shadow-sm hover:shadow-md transition-all duration-300 hover:scale-105 cursor-pointer mr-1">
@@ -202,15 +206,9 @@ const Navbar = ({ locale }: any) => {
                               >
                                 <div className="flex !h-[100%] items-start">
                                   <Avatar className="w-[40px] h-[40px] relative">
-                                    {/* <Suspense
-                                    fallback={
-                                      <FaSpinner className="animate-spin" />
-                                    }
-                                  > */}
                                     <AvatarImage
                                       src={notification?.image || ""}
                                     />
-                                    {/* </Suspense> */}
                                     <AvatarFallback className="bg-[var(--clr-secondary)] text-[var(--clr-primary)] text-lg font-bold">
                                       {notification?.name
                                         ?.split("")
@@ -239,23 +237,18 @@ const Navbar = ({ locale }: any) => {
                     className=" h-[40px]   rounded-full p-4 px-2 flex items-center justify-center bg-[var(--clr-silver)] bg-clip-padding backdrop-filter backdrop-blur-3xl bg-opacity-100 shadow-sm hover:shadow-md transition-all duration-300 hover:scale-105 cursor-pointer"
                     // onClick={() => setIsContextMenuVisible(true)}
                   >
-                    {session?.status === "authenticated" ? (
+                    {sessionData ? (
                       <>
                         <div className=" block md:hidden">
-                          {/* {screenSize?.width <= 1024 ? ( */}
                           <Drawer>
                             <DrawerTrigger asChild className="block md:hidden">
                               <div className="flex md:hidden items-center gap-2">
                                 <Avatar className="w-[30px] h-[30px] relative">
-                                  {/* <Suspense
-                              fallback={<FaSpinner className="animate-spin" />}
-                            > */}
                                   <AvatarImage
-                                    src={session?.data?.user?.image || ""}
+                                    src={sessionData?.user?.image || ""}
                                   />
-                                  {/* </Suspense> */}
                                   <AvatarFallback className="bg-[var(--clr-secondary)] text-[var(--clr-primary)]">
-                                    {session?.data?.user?.name
+                                    {sessionData?.user?.name
                                       ?.split("")
                                       ?.shift()
                                       ?.toUpperCase()}
@@ -268,10 +261,10 @@ const Navbar = ({ locale }: any) => {
                               <DrawerHeader className="px-0">
                                 <div className="px-4 flex flex-col items-start">
                                   <h1 className="text-md font-semibold text-[var(--clr-jet)]">
-                                    {session?.data?.user?.name}
+                                    {sessionData?.user?.name}
                                   </h1>
                                   <p className="text-xs text-[var(--clr-jet-v1)] font-normal">
-                                    {session?.data?.user?.email}
+                                    {sessionData?.user?.email}
                                   </p>
                                 </div>
                                 <div className=" mt-1 mb-4 border-t-[1px] w-full border-[var(--clr-silver)]" />
@@ -304,10 +297,6 @@ const Navbar = ({ locale }: any) => {
                               </DrawerHeader>
                               <DrawerFooter className="px-0">
                                 <div className=" mt-10 border-t-[1px] w-full border-[var(--clr-silver)]" />
-                                {/* <div className="flex items-center gap-4 px-4 hover:bg-slate-100 py-2 cursor-pointer">
-                                <ExitIcon className="mr-2 h-4 w-4" />
-                                <span>Log out</span>
-                              </div> */}
                                 <DrawerClose asChild>
                                   <div
                                     onClick={logout}
@@ -320,24 +309,17 @@ const Navbar = ({ locale }: any) => {
                               </DrawerFooter>
                             </DrawerContent>
                           </Drawer>
-                          {/* ) : ( */}
-
-                          {/* )} */}
                         </div>
                         <div className="hidden md:block">
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                               <div className="hidden  md:flex items-center gap-2">
                                 <Avatar className="w-[30px] h-[30px] relative">
-                                  {/* <Suspense
-                              fallback={<FaSpinner className="animate-spin" />}
-                            > */}
                                   <AvatarImage
-                                    src={session?.data?.user?.image || ""}
+                                    src={sessionData?.user?.image || ""}
                                   />
-                                  {/* </Suspense> */}
                                   <AvatarFallback className="bg-[var(--clr-secondary)] text-[var(--clr-primary)]">
-                                    {session?.data?.user?.name
+                                    {sessionData?.user?.name
                                       ?.split("")
                                       ?.shift()
                                       ?.toUpperCase()}
@@ -349,10 +331,10 @@ const Navbar = ({ locale }: any) => {
                             <DropdownMenuContent className="rounded-[5px] w-56 py-1 px-0 hidden md:block ">
                               <DropdownMenuLabel className="px-5 flex flex-col items-start">
                                 <h1 className="text-md font-semibold text-[var(--clr-jet)]">
-                                  {session?.data?.user?.name}
+                                  {sessionData?.user?.name}
                                 </h1>
                                 <p className="text-xs text-[var(--clr-jet-v1)] font-normal">
-                                  {session?.data?.user?.email}
+                                  {sessionData?.user?.email}
                                 </p>
                               </DropdownMenuLabel>
                               <DropdownMenuSeparator />
@@ -400,19 +382,6 @@ const Navbar = ({ locale }: any) => {
                       </div>
                     )}
                   </div>
-                  {/* {isContextMenuVisible && (
-                  <ContextMenu
-                    contextMenu={isContextMenuVisible}
-                    setContextMenu={setIsContextMenuVisible}
-                    cordinates={{ x: window.innerWidth - 280, y: 70 }}
-                    options={
-                      // userInfo ? authenticatedContextMenuOptions : contextMenuOptions
-                      session?.status === "authenticated" &&
-                      authenticatedUserContextMenuOptions
-                    }
-                    locale={locale}
-                  />
-                )} */}
                 </>
               ) : (
                 <div className="flex items-center gap-3 ">
@@ -424,14 +393,11 @@ const Navbar = ({ locale }: any) => {
                       </div>
                     </div>
                   </LanguageButton>
-
                   <Link
                     href={
                       locale === "en" ? `/auth/login` : `/${locale}/auth/login`
                     }
                   >
-                    {/* <div onClick={() => setAuthModal()}> */}
-                    {/* <LoginButton asChild mode="modal"> */}
                     <div className="w-[120px] h-[38px] rounded-[20px]  bg-[var(--clr-secondary-light)]  flex items-center justify-between pl-[10px] text-[14px] font-base text-[var(--clr-primary)] shadow-md hover:shadow-md transition-all duration-300 hover:scale-105 cursor-pointer">
                       <div>
                         <p className="text-sm">Login</p>
@@ -440,8 +406,6 @@ const Navbar = ({ locale }: any) => {
                         <p className="text-sm">Signup</p>
                       </div>
                     </div>
-                    {/* </LoginButton> */}
-                    {/* </div> */}
                   </Link>
                 </div>
               )}

@@ -116,7 +116,7 @@ export default async function Home({ params: { locale } }: any) {
     >
       {/* //{" "} */}
       {/* <main className="flex h-full flex-col items-center justify-center bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-sky-400 to-blue-800"> */}
-      <Navbar locale={locale} />
+      <Navbar locale={locale} session={session} />
       <div className="space-y-2 text-center w-full overflow-y-auto">
         <section className="h-[90vh] w-full overflow-hidden mb-4">
           <Suspense fallback={<p>Loading...</p>}>

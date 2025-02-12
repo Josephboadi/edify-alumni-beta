@@ -6,9 +6,10 @@ import Header from "./Header";
 import SideBar from "./SideBar";
 interface LayoutProps {
   children: ReactNode;
+  session: any;
   // params: any;
 }
-const Layout = ({ children }: LayoutProps) => {
+const Layout = ({ children, session }: LayoutProps) => {
   const [toggleSide, setToggleSide] = useState<boolean>(true);
   return (
     <main className="h-screen flex w-screen flex-row overflow-hidden ">
@@ -31,7 +32,7 @@ const Layout = ({ children }: LayoutProps) => {
       </div> */}
 
       <div className={`flex flex-col flex-1 overflow-hidden scroll-side  `}>
-        <Header />
+        <Header session={session} />
         <div className="h-[92vh] flex-1  overflow-hidden">
           <div
             className={`flex-1 bg-[var(--clr-primary)]  py-4  pt-0 overflow-auto overflow-x-hidden h-[82vh] xsm:h-[84vh] ${

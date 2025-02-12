@@ -1036,3 +1036,22 @@ export type DiscussionMessagesInfoData = {
     isTwoFactorEnabled: boolean;
   };
 };
+
+export type DiscussionMessagesData = {
+  id: number;
+  message_id: string;
+  message: string;
+  date_added: string;
+  status: number;
+  user_id: string;
+  discussion_id: string;
+  user: {
+    id: number;
+    discussion_id: string;
+    topic: string;
+    status: number;
+    date_added: string;
+    added_by_id: string;
+    cover_image: string;
+  };
+};

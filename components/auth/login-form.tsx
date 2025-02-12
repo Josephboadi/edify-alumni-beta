@@ -69,7 +69,7 @@ export const LoginForm = () => {
           form.reset();
           setIsAuthenticated();
           setSuccess("Login Sucessful");
-          window.location.reload();
+          // window.location.reload();
 
           // router.push(locale === "en" ? `/` : `/${locale}/`);
 

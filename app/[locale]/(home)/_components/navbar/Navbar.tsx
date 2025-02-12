@@ -37,12 +37,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useCurrentAuth } from "@/hooks/use-current-auth";
 import { useAppStore } from "@/store/store";
 import { createPortal } from "react-dom";
 
-const Navbar = ({ locale }: any) => {
-  const session = useCurrentAuth();
+const Navbar = ({ locale, session }: any) => {
+  // const session = useCurrentAuth();
   const { t } = useTranslation();
   const { formType, authModal, setAuthModal } = useAppStore();
   const pathname = usePathname();
@@ -56,15 +55,13 @@ const Navbar = ({ locale }: any) => {
   const [selectedMenu, setSelectedMenu] = useState(pathname);
   const [authStatus, setAuthStatus] = useState(false);
 
-  // console.log("session from navigation=====================", session);
-
   const handleCloseButtonClick = () => {
     setAuthModal();
   };
 
   const handleLogout = async () => {
     await logout();
-    window.location.reload();
+    // window.location.reload();
   };
   // const contextMenuOptions = [
   //   {
@@ -157,7 +154,7 @@ const Navbar = ({ locale }: any) => {
             {/* bg-[var(--clr-primary-light)] bg-clip-padding backdrop-filter
           backdrop-blur-sm bg-opacity-10 */}
             <div className="flex items-center ">
-              {session?.status === "authenticated" ? (
+              {session ? (
                 <>
                   <LanguageButton asChild mode="modal">
                     <div className=" h-[38px]   rounded-full p-2 px-2 flex items-center justify-center  bg-[var(--clr-silver)] bg-clip-padding backdrop-filter backdrop-blur-3xl bg-opacity-100 shadow-sm hover:shadow-md transition-all duration-300 hover:scale-105 cursor-pointer mr-1">
@@ -235,7 +232,7 @@ const Navbar = ({ locale }: any) => {
                     className=" h-[40px]   rounded-full p-4 px-2 flex items-center justify-center bg-[var(--clr-silver)] bg-clip-padding backdrop-filter backdrop-blur-3xl bg-opacity-100 shadow-sm hover:shadow-md transition-all duration-300 hover:scale-105 cursor-pointer"
                     // onClick={() => setIsContextMenuVisible(true)}
                   >
-                    {session?.status === "authenticated" ? (
+                    {session ? (
                       <>
                         <div className=" block md:hidden">
                           {/* {screenSize?.width <= 1024 ? ( */}
@@ -247,11 +244,11 @@ const Navbar = ({ locale }: any) => {
                               fallback={<FaSpinner className="animate-spin" />}
                             > */}
                                   <AvatarImage
-                                    src={session?.data?.user?.image || ""}
+                                    src={session?.user?.image || ""}
                                   />
                                   {/* </Suspense> */}
                                   <AvatarFallback className="bg-[var(--clr-secondary)] text-[var(--clr-primary)]">
-                                    {session?.data?.user?.name
+                                    {session?.user?.name
                                       ?.split("")
                                       ?.shift()
                                       ?.toUpperCase()}
@@ -264,10 +261,10 @@ const Navbar = ({ locale }: any) => {
                               <DrawerHeader className="px-0">
                                 <div className="px-4 flex flex-col items-start">
                                   <h1 className="text-md font-semibold text-[var(--clr-jet)]">
-                                    {session?.data?.user?.name}
+                                    {session?.user?.name}
                                   </h1>
                                   <p className="text-xs text-[var(--clr-jet-v1)] font-normal">
-                                    {session?.data?.user?.email}
+                                    {session?.user?.email}
                                   </p>
                                 </div>
                                 <div className=" mt-1 mb-4 border-t-[1px] w-full border-[var(--clr-silver)]" />
@@ -329,11 +326,11 @@ const Navbar = ({ locale }: any) => {
                               fallback={<FaSpinner className="animate-spin" />}
                             > */}
                                   <AvatarImage
-                                    src={session?.data?.user?.image || ""}
+                                    src={session?.user?.image || ""}
                                   />
                                   {/* </Suspense> */}
                                   <AvatarFallback className="bg-[var(--clr-secondary)] text-[var(--clr-primary)]">
-                                    {session?.data?.user?.name
+                                    {session?.user?.name
                                       ?.split("")
                                       ?.shift()
                                       ?.toUpperCase()}
@@ -345,10 +342,10 @@ const Navbar = ({ locale }: any) => {
                             <DropdownMenuContent className="rounded-[5px] w-56 py-1 px-0 hidden md:block ">
                               <DropdownMenuLabel className="px-5 flex flex-col items-start">
                                 <h1 className="text-md font-semibold text-[var(--clr-jet)]">
-                                  {session?.data?.user?.name}
+                                  {session?.user?.name}
                                 </h1>
                                 <p className="text-xs text-[var(--clr-jet-v1)] font-normal">
-                                  {session?.data?.user?.email}
+                                  {session?.user?.email}
                                 </p>
                               </DropdownMenuLabel>
                               <DropdownMenuSeparator />

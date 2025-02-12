@@ -178,7 +178,9 @@ export const getcountry = async () => {
       const allowedOrigins = [apiUrl];
       if (allowedOrigins.includes(origin)) {
         config.headers.tokenID = `${existingToken?.token}`;
+        config.headers["Content-Type"] = "application/json";
       }
+      // console.log("Config data===============================, ", config);
       return config;
     },
     (error) => {

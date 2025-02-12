@@ -89,11 +89,19 @@ export const generateVerificationToken = async (
 export const generateSessionToken = async () => {
   let sessionData;
   const authData = await auth();
+  // console.log(
+  //   "authData from generateSessionToken===============================, ",
+  //   authData
+  // );
 
   if (authData) {
     const existingToken = await getSessionByID(authData?.user.id);
     if (existingToken) {
       const hasExpired = new Date(existingToken.expires) < new Date();
+      // console.log(
+      //   "hasExpired======================================, ",
+      //   hasExpired
+      // );
       if (hasExpired) {
         await db.session.delete({
           where: {

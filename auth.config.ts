@@ -30,10 +30,6 @@ export default {
           const passwordsMatch = await bcrypt.compare(password, user.password);
 
           if (passwordsMatch) {
-            // console.log(
-            //   "User from auth.config===============================, ",
-            //   user
-            // );
             return user;
           }
         }
